@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Drawing;
 
 
 public class Graphic
 {
-    public static Graphic graphics;
+    public static Graphic graphics { get; private set; }
 
     private HandleRef handleRef;
     private GDIHelper.BITMAPINFO bitmapInfo;
@@ -17,7 +17,7 @@ public class Graphic
     private int[] data;
     private int[] layersBuffer;
 
-    public Graphic(int width, int height, HandleRef handleRef)
+    private Graphic(int width, int height, Graphics context)
     {
         this.width = width;
         this.height = height;
@@ -28,10 +28,29 @@ public class Graphic
         data = new int[bufferSize];
         bitmapInfo = GDIHelper.CreateBitmapinfo(width, height);
 
-        this.handleRef = handleRef;
+        handleRef = new HandleRef(context, context.GetHdc());
+
+        graphics = this;
     }
 
-    public void Draw()
+    public static void Create(int width, int height, Graphics context)
+    {
+        new Graphic(width, height, context);
+    }
+
+    public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
+    {
+        DateTime now = DateTime.Now;
+
+        for (int i = 0; i < gameObjects.Length; i++)
+            DrawGameObject(camera, gameObjects[i]);
+
+        //System.Threading.Tasks.Parallel.For(0, gameObjects.Length, i => DrawGameObject(camera, gameObjects[i]));
+
+        Time.deltaTime = (float)(DateTime.Now - now).TotalMilliseconds;
+    }
+
+    public void GDIDraw()
     {
         CIntegrations.SetDIBitsToDevice(handleRef, 0, 0, width, height, 0, 0, 0, height, ref data[0], ref bitmapInfo, 0);
     }
@@ -64,14 +83,32 @@ public class Graphic
         CIntegrations.clear(ref layersBuffer[0], int.MinValue, bufferSize);
     }
 
-    public unsafe void Blend(LightMap lightMap)
-    {
-        
-    }
-
-    internal unsafe void DrawGameObject(int delta, int layer, int width, int height, CIntegrations.Color[] sprite)
+    public void DrawGameObject(int delta, int layer, int width, int height, CIntegrations.Color[] sprite)
     {
         CIntegrations.draw_sprite(ref data[0], ref sprite[0], ref layersBuffer[0], delta, layer, this.width, this.height, width, height, bufferSize);
+    }
+
+    private void DrawGameObject(Camera camera, GameObject gameObject)
+    {
+        int posX = (int)((gameObject.transform.position.X - camera.position.X) * 32);
+        int posY = (int)((gameObject.transform.position.Y - camera.position.Y) * 32);
+
+        gameObject.Update();
+
+        int delta = posX + posY * width;
+
+        Sprite sprite = gameObject.renderer.sprite;
+
+        if (camera.viewport.Contain(posX, posY) && sprite != null)
+        {
+            gameObject.OnDraw();
+
+            Graphic.graphics.DrawGameObject(delta,
+                gameObject.Layer,
+                sprite.Width * gameObject.transform.HorizontalOrientation,
+                sprite.Height * gameObject.transform.VerticalOrientation,
+                sprite.GetTColors());
+        }
     }
 }
 

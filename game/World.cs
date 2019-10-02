@@ -15,9 +15,7 @@ public class World
         physicActiveObjects = new GameObject[0];
         lightObjects = new GameObject[0];
 
-        //PhysMake();
         Fill();
-        //Generate();
     }
 
     private void Fill()

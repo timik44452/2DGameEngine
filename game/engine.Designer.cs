@@ -35,7 +35,6 @@
             this.ClientSize = new System.Drawing.Size(1264, 681);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "engine";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Engine_FormClosing);
             this.Load += new System.EventHandler(this.Engine_Load);
             this.ResumeLayout(false);
 

@@ -51,16 +51,6 @@ public struct Vector
         Recalculate();
     }
 
-    public Vector(Point point)
-    {
-        x = point.x;
-        y = point.y;
-
-        length = 0;
-
-        Recalculate();
-    }
-
     public Vector(float X, float Y)
     {
         x = X;
@@ -123,5 +113,13 @@ public struct Vector
         }
 
         return false;
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = 1502939027;
+        hashCode = hashCode * -1521134295 + x.GetHashCode();
+        hashCode = hashCode * -1521134295 + y.GetHashCode();
+        return hashCode;
     }
 }

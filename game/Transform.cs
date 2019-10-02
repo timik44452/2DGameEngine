@@ -13,4 +13,3 @@ public class Transform : Component
         get => (int)(scale.X / System.Math.Abs(scale.X));
     }
 }
-
