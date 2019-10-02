@@ -22,9 +22,9 @@ public class World
     {
         var renderer = new Renderer(Resourcepack.GetSprite("grass"));
 
-        for (int x = -100; x < 100; x++)
+        for (int x = 0; x < 100; x++)
         {
-            for (int y = -100; y < 100; y++)
+            for (int y = 0; y < 100; y++)
             {
                 GameObject gameObject = new GameObject();
 

@@ -66,14 +66,11 @@ extern "C" __declspec (dllexport) void _stdcall draw_sprite(int* frame, Color* s
 				if (_f_i > 0 && _f_i < bs && sprite[i].a > 0 && zBuffer[_f_i] < layer)
 				{
 					frame[_f_i] = sprite[i].rgb;
-					//zBuffer[_f_i] = layer;
 				}
 
 				i++;
 			}
 		}
-
-		memset(zBuffer, layer, sw * sh);
 	}
 	else
 	{
@@ -96,6 +93,8 @@ extern "C" __declspec (dllexport) void _stdcall draw_sprite(int* frame, Color* s
 
 		}
 	}
+
+	memset(zBuffer, layer, sw);
 }
 extern "C" __declspec (dllexport) void _stdcall clear(int* buffer, int value, int size)
 {
