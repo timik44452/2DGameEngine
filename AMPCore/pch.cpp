@@ -52,25 +52,6 @@ extern "C" __declspec (dllexport) void _stdcall draw_sprite(int* frame, Color* s
 	if (from_x > to_x)std::swap(from_x, to_x);
 	if (from_y > to_y)std::swap(from_y, to_y);
 
-	int n = 0;
-
-	n = stride % w + from_x;
-
-	if (n < 0)
-	{
-		from_x -= n;
-		n = -n;
-		i = n;
-	}
-	else if (n >= w)
-	{
-		n -= w;
-		to_x -= n;
-	}
-	else
-	{
-		n = 0;
-	}
 
 	if (sw > 0)
 	{
@@ -85,14 +66,14 @@ extern "C" __declspec (dllexport) void _stdcall draw_sprite(int* frame, Color* s
 				if (_f_i > 0 && _f_i < bs && sprite[i].a > 0 && zBuffer[_f_i] < layer)
 				{
 					frame[_f_i] = sprite[i].rgb;
-					zBuffer[_f_i] = layer;
+					//zBuffer[_f_i] = layer;
 				}
 
 				i++;
 			}
-
-			i += n;
 		}
+
+		memset(zBuffer, layer, sw * sh);
 	}
 	else
 	{
@@ -107,13 +88,12 @@ extern "C" __declspec (dllexport) void _stdcall draw_sprite(int* frame, Color* s
 				if (_f_i > 0 && _f_i < bs && sprite[i].a > 0 && zBuffer[_f_i] < layer)
 				{
 					frame[_f_i] = sprite[i].rgb;
-					zBuffer[_f_i] = layer;
+					//zBuffer[_f_i] = layer;
 				}
 
 				i++;
 			}
 
-			i += n;
 		}
 	}
 }

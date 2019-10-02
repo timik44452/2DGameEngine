@@ -6,9 +6,6 @@ public class Component
     public virtual void OnCreated()
     {
     }
-    public virtual void OnDraw()
-    {
-    }
     public virtual void FixedUpdate()
     {
     }

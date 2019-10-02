@@ -20,15 +20,17 @@ public class World
 
     private void Fill()
     {
-        for (int x = 0; x < 75; x++)
+        var renderer = new Renderer(Resourcepack.GetSprite("grass"));
+
+        for (int x = -100; x < 100; x++)
         {
-            for (int y = 0; y < 35; y++)
+            for (int y = -100; y < 100; y++)
             {
                 GameObject gameObject = new GameObject();
 
                 gameObject.Layer = 1;
                 gameObject.transform.position = new Vector(x, y);
-                gameObject.AddComponent(new Renderer(Resourcepack.GetSprite("grass")));
+                gameObject.AddComponent(renderer);
 
                 CreateGameObject(gameObject);
             }

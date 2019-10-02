@@ -87,11 +87,6 @@ public class GameObject
         for (int i = 0; i < components.Length; i++)
             components[i].FixedUpdate();
     }
-    public void OnDraw()
-    {
-        for (int i = 0; i < components.Length; i++)
-            components[i].OnDraw();
-    }
 
     public void OnCreated()
     {

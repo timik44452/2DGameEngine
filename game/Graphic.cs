@@ -33,19 +33,19 @@ public class Graphic
         graphics = this;
     }
 
-    public static void Create(int width, int height, Graphics context)
+    public static Graphic Create(int width, int height, Graphics context)
     {
-        new Graphic(width, height, context);
+        return new Graphic(width, height, context);
     }
 
     public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
     {
         DateTime now = DateTime.Now;
 
-        for (int i = 0; i < gameObjects.Length; i++)
-            DrawGameObject(camera, gameObjects[i]);
+        //for (int i = 0; i < gameObjects.Length; i++)
+         //   DrawGameObject(camera, gameObjects[i]);
 
-        //System.Threading.Tasks.Parallel.For(0, gameObjects.Length, i => DrawGameObject(camera, gameObjects[i]));
+        System.Threading.Tasks.Parallel.For(0, gameObjects.Length, i => DrawGameObject(camera, gameObjects[i]));
 
         Time.deltaTime = (float)(DateTime.Now - now).TotalMilliseconds;
     }
@@ -101,9 +101,7 @@ public class Graphic
 
         if (camera.viewport.Contain(posX, posY) && sprite != null)
         {
-            gameObject.OnDraw();
-
-            Graphic.graphics.DrawGameObject(delta,
+            graphics.DrawGameObject(delta,
                 gameObject.Layer,
                 sprite.Width * gameObject.transform.HorizontalOrientation,
                 sprite.Height * gameObject.transform.VerticalOrientation,
