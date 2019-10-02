@@ -22,40 +22,19 @@ public class World
 
     private void Fill()
     {
-        GameObject player = new GameObject();
-        GameObject particle = new GameObject();
-        GameObject gameObject = new GameObject();
+        for (int x = 0; x < 75; x++)
+        {
+            for (int y = 0; y < 35; y++)
+            {
+                GameObject gameObject = new GameObject();
 
-        gameObject.transform.position = new Vector(25, 10);
+                gameObject.Layer = 1;
+                gameObject.transform.position = new Vector(x, y);
+                gameObject.AddComponent(new Renderer(Resourcepack.GetSprite("grass")));
 
-
-        gameObject.AddComponent(new PhysicBody());
-        //gameObject.GetComponent<PhysicBody>().IsStatic;
-        gameObject.GetComponent<PhysicBody>().SetShape(ShapeAtlas.Quad);
-        gameObject.AddComponent(new Renderer(Resourcepack.GetSprite("grass")));
-
-
-        particle.transform.position = new Vector(25, 15);
-
-
-        player.transform.position = new Vector(10, 10);
-
-        player.AddComponent(new Player());
-        player.AddComponent(new Animation(Resourcepack.GetSprites("27", "28", "29", "30", "31", "32", "33", "34", "35")));
-        player.AddComponent(new Renderer());
-        player.AddComponent(new PhysicBody());
-        player.GetComponent<PhysicBody>().SetShape(ShapeAtlas.Quad);
-
-        float speed = 5F;
-
-        player.GetComponent<Player>().Speed = 0.02F * speed;
-        player.GetComponent<Animation>().Speed = 0.2F * speed;
-
-        player.Layer = 10;
-
-        CreateGameObject(gameObject);
-        CreateGameObject(particle);
-        CreateGameObject(player);
+                CreateGameObject(gameObject);
+            }
+        }
     }
 
     public void Destroy(GameObject gameObject)

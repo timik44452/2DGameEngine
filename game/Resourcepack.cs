@@ -36,13 +36,28 @@ public static class Resourcepack
             return null;
     }
 
-    public static void LoadTilemap(TilemapCell[] cells)
+    public static void LoadTilemap(params TilemapCell[] cells)
     {
-        var tilemap = GetTexture("tilemap");
+        Texture tilemap = GetTexture("tilemap");
 
         if(tilemap != null)
         {
-            // Tilemap celling here....
+            for (int k = 0; k < cells.Length; k++)
+            {
+                TilemapCell cell = cells[k];
+                Texture texture = new Texture(cell.Width, cell.Height);
+
+                for (int y = 0; y < cell.Height; y++)
+                {
+                    for (int x = 0; x < cell.Width; x++)
+                    {
+                        texture.SetPixel(x, y, tilemap.GetPixel(cell.X + x, cell.Y + y));
+                    }
+                }
+
+                texture_base.Add(cell.name, texture);
+                sprite_base.Add(cell.name, new Sprite(texture));
+            }
         }
     }
 
