@@ -6,7 +6,7 @@ public class Sprite : Asset
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    private CIntegrations.Color[] colors;
+    private Color[] colors;
 
     public int[] Buffer;
 
@@ -15,7 +15,7 @@ public class Sprite : Asset
         this.Width = Width;
         this.Height = Height;
 
-        colors = new CIntegrations.Color[Width * Height];
+        colors = new Color[Width * Height];
         Buffer = new int[Width * Height];
     }
 
@@ -24,7 +24,7 @@ public class Sprite : Asset
         Width = texture.Width;
         Height = texture.Height;
 
-        colors = new CIntegrations.Color[Width * Height];
+        colors = new Color[Width * Height];
         Buffer = new int[Width * Height];
 
         for (int x = 0; x < Width; x++)
@@ -42,13 +42,7 @@ public class Sprite : Asset
 
         if(index >= 0 && index < colors.Length)
         {
-            colors[x + y * Width] = new CIntegrations.Color(color.R, color.G, color.B, color.A, color.rgb);
-            Buffer[x + y + Width] = color.rgb;
+            colors[x + y * Width] = color;
         }
-    }
-
-    public CIntegrations.Color[] GetTColors()
-    {
-        return colors;
     }
 }

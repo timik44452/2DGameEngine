@@ -17,6 +17,11 @@ extern "C" __declspec (dllexport) int _stdcall InitDevice(int Width, int Height,
 	return core->DXInitDevice(Width, Height, context);
 }
 
+extern "C" __declspec (dllexport) void _stdcall MessageDevice(char* text, HWND context)
+{
+	//MessageBox(context, *str, L"", 0);
+}
+
 extern "C" _declspec (dllexport) int _stdcall SetViewport(int Width, int Height)
 {
 	return core->DXSetViewport(Width, Height);

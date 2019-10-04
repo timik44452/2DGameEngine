@@ -43,4 +43,7 @@ public static class CIntegrations
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
     public extern static void Init();
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static void MessageDevice(string text, System.IntPtr context);
 }

@@ -50,6 +50,8 @@ public class Graphic
         var pixelShader = Resourcepack.GetResource<Shader>("pixelShader");
         var vertexShader = Resourcepack.GetResource<Shader>("vertexShader");
 
+        CIntegrations.MessageDevice(pixelShader.path, handle);
+
         CIntegrations.InitDevice(width, height, handle);
         CIntegrations.SetViewport(width, height);
         int code = CIntegrations.LoadShaders(ref pixelShader.path.ToCharArray()[0], ref vertexShader.path.ToCharArray()[0]);
