@@ -9,5 +9,15 @@
 
 // Добавьте сюда заголовочные файлы для предварительной компиляции
 #include "framework.h"
+#include <stdio.h>
+#include <time.h>
+#include <assert.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <tchar.h>
+#include <Windows.h>
+#include <dxgi.h>
+#include <d3d11.h>
+
 
 #endif //PCH_H

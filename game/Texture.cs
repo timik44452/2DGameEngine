@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-public class Texture
+public class Texture : Asset
 {
     public int Width { get; private set; }
     public int Height { get; private set; }

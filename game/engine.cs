@@ -8,8 +8,6 @@ namespace WindowsFormsApp5
         private const bool IsFullWindow = true;
         private const int unitSize = 32;
 
-        Graphic graphics;
-
         private World map;
         private Input input;
         private Camera camera;
@@ -32,10 +30,8 @@ namespace WindowsFormsApp5
         }
 
         private void PaintScene()
-        { 
-            graphics.Clear();
-            graphics.DrawGameObjects(camera, map.GetViewedObjects());
-            graphics.GDIDraw();
+        {
+            Graphic.graphics.DrawGameObjects(camera, map.GetViewedObjects());
 
             Input.WorldMousePosition = new Vector(MousePosition.X % Width, MousePosition.Y / Width);
 
@@ -46,7 +42,7 @@ namespace WindowsFormsApp5
         {
             camera = new Camera(new Rect(-unitSize, -unitSize, Width + unitSize, Height + unitSize));
 
-            graphics = Graphic.Create(Width, Height, CreateGraphics());
+            Graphic.Create(Width, Height, Handle);
 
             var timer1 = new Timer();
 
@@ -55,6 +51,11 @@ namespace WindowsFormsApp5
             timer1.Interval = 1;
 
             timer1.Start();
+        }
+
+        private void engine_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CIntegrations.Release();
         }
     }
 }

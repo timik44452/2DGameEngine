@@ -21,19 +21,26 @@ public static class CIntegrations
             this.rgb = rgb;
         }
     }
+    public struct Vertex
+    {
+        public float x, y, z;
+    }
 
-    [DllImport("gdi32")]
-    public extern static int SetDIBitsToDevice(HandleRef hDC, int xDest, int yDest, int dwWidth, int dwHeight, int XSrc, int YSrc, int uStartScan, int cScanLines, ref int lpvBits, ref GDIHelper.BITMAPINFO lpbmi, uint fuColorUse);
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static int InitDevice(int Width, int Height, System.IntPtr context);
 
-    [DllImport("AMPCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void draw_sprite(ref int frame, ref Color sprite, ref int zBuffer, int stride, int layer, int w, int h, int sw, int sh, int bs);
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static int SetViewport(int Width, int Height);
 
-    [DllImport("AMPCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void clear(ref int buffer, int value, int count);
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static int LoadShaders(ref char pixelShaderPath, ref char vertexShaderPath);
 
-    [DllImport("AMPCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static int input_handler(int code);
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static void Draw(int verticesCount, ref Vertex vertices);
 
-    //[DllImport("AMPCore", CallingConvention = CallingConvention.StdCall)]
-    //public extern static Point get_mouse_position();
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static void Release();
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static void Init();
 }

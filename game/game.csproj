@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
+    <Compile Include="Asset.cs" />
     <Compile Include="Audio\Audio.cs" />
     <Compile Include="Audio\AudioClip.cs" />
     <Compile Include="Camera.cs" />
@@ -68,15 +69,14 @@
     <Compile Include="Rect.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="ColorHelper.cs" />
-    <Compile Include="FastBitmap.cs" />
     <Compile Include="engine.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="engine.Designer.cs">
       <DependentUpon>engine.cs</DependentUpon>
     </Compile>
-    <Compile Include="GDIHelper.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Shader.cs" />
     <Compile Include="TilemapCell.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="World.cs" />

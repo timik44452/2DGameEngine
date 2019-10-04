@@ -7,9 +7,6 @@ public class Graphic
 {
     public static Graphic graphics { get; private set; }
 
-    private HandleRef handleRef;
-    private GDIHelper.BITMAPINFO bitmapInfo;
-
     private int width;
     private int height;
     private int bufferSize;
@@ -17,7 +14,10 @@ public class Graphic
     private int[] data;
     private int[] layersBuffer;
 
-    private Graphic(int width, int height, Graphics context)
+    private CIntegrations.Vertex[] vertices = new CIntegrations.Vertex[3];
+
+
+    private Graphic(int width, int height)
     {
         this.width = width;
         this.height = height;
@@ -26,16 +26,37 @@ public class Graphic
 
         layersBuffer = new int[bufferSize];
         data = new int[bufferSize];
-        bitmapInfo = GDIHelper.CreateBitmapinfo(width, height);
-
-        handleRef = new HandleRef(context, context.GetHdc());
 
         graphics = this;
+
+        graphics.vertices[0].x = -1;
+        graphics.vertices[0].y = -1;
+
+        graphics.vertices[1].x = 1;
+        graphics.vertices[1].y = 1;
+
+        graphics.vertices[2].x = 1;
+        graphics.vertices[2].y = -1;
+
+        
+
+        
+        
+
     }
 
-    public static Graphic Create(int width, int height, Graphics context)
+    public static Graphic Create(int width, int height, IntPtr handle)
     {
-        return new Graphic(width, height, context);
+        var pixelShader = Resourcepack.GetResource<Shader>("pixelShader");
+        var vertexShader = Resourcepack.GetResource<Shader>("vertexShader");
+
+        CIntegrations.InitDevice(width, height, handle);
+        CIntegrations.SetViewport(width, height);
+        int code = CIntegrations.LoadShaders(ref pixelShader.path.ToCharArray()[0], ref vertexShader.path.ToCharArray()[0]);
+
+        System.Windows.Forms.MessageBox.Show(code.ToString());
+
+        return new Graphic(width, height);
     }
 
     public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
@@ -43,49 +64,13 @@ public class Graphic
         DateTime now = DateTime.Now;
 
         //for (int i = 0; i < gameObjects.Length; i++)
-         //   DrawGameObject(camera, gameObjects[i]);
+        //   DrawGameObject(camera, gameObjects[i]);
 
-        System.Threading.Tasks.Parallel.For(0, gameObjects.Length, i => DrawGameObject(camera, gameObjects[i]));
+        //System.Threading.Tasks.Parallel.For(0, gameObjects.Length, i => DrawGameObject(camera, gameObjects[i]));
+
+        CIntegrations.Draw(3, ref vertices[0]);
 
         Time.deltaTime = (float)(DateTime.Now - now).TotalMilliseconds;
-    }
-
-    public void GDIDraw()
-    {
-        CIntegrations.SetDIBitsToDevice(handleRef, 0, 0, width, height, 0, 0, 0, height, ref data[0], ref bitmapInfo, 0);
-    }
-
-    public void SetPixel(int x, int y, Color color)
-    {
-        if (color.A == 1)
-        {
-            int index = x + y * width;
-
-            if (index >= 0 && index < bufferSize)
-            {
-                data[index] = color.rgb;
-            }
-        }
-    }
-
-    public void SetPixel(int index, short layer, Color color)
-    {
-        if (index >= 0 && index < bufferSize && layer > layersBuffer[index])
-        {
-            layersBuffer[index] = layer;
-            data[index] = color.rgb;
-        }
-    }
-
-    public void Clear()
-    {
-        CIntegrations.clear(ref data[0], 0, bufferSize);
-        CIntegrations.clear(ref layersBuffer[0], int.MinValue, bufferSize);
-    }
-
-    public void DrawGameObject(int delta, int layer, int width, int height, CIntegrations.Color[] sprite)
-    {
-        CIntegrations.draw_sprite(ref data[0], ref sprite[0], ref layersBuffer[0], delta, layer, this.width, this.height, width, height, bufferSize);
     }
 
     private void DrawGameObject(Camera camera, GameObject gameObject)
@@ -101,11 +86,7 @@ public class Graphic
 
         if (camera.viewport.Contain(posX, posY) && sprite != null)
         {
-            graphics.DrawGameObject(delta,
-                gameObject.Layer,
-                sprite.Width * gameObject.transform.HorizontalOrientation,
-                sprite.Height * gameObject.transform.VerticalOrientation,
-                sprite.GetTColors());
+            //TODO:HERE GAMEOBJECT DRAWING
         }
     }
 }

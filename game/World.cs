@@ -20,7 +20,7 @@ public class World
 
     private void Fill()
     {
-        var renderer = new Renderer(Resourcepack.GetSprite("grass"));
+        var renderer = new Renderer(Resourcepack.GetResource<Sprite>("grass"));
 
         for (int x = 0; x < 100; x++)
         {

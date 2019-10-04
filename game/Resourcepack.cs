@@ -4,41 +4,24 @@ using System.Collections.Generic;
 
 public static class Resourcepack
 {
-    private static Dictionary<string, Texture> texture_base = new Dictionary<string, Texture>();
-    private static Dictionary<string, Sprite> sprite_base = new Dictionary<string, Sprite>();
+    private static List<Asset> assets = new List<Asset>();
 
-
-    public static Sprite[] GetSprites(params string[] names)
+    public static T GetResource<T>(string name) where T : Asset
     {
-        Sprite[] sprites = new Sprite[names.Length];
+        return (T)assets.Find(x => x.name == name);
+    }
 
-        for (int i = 0; i < names.Length; i++)
+    public static IEnumerator<T> GetResources<T>(params string[] names) where T : Asset
+    {
+        foreach (string name in names)
         {
-            sprites[i] = sprite_base.ContainsKey(names[i]) ? sprite_base[names[i]] : null;
+            yield return (T)assets.Find(x => x.name == name);
         }
-
-        return sprites;
     }
-
-    public static Sprite GetSprite(string name)
-    {
-        if (sprite_base.ContainsKey(name))
-            return sprite_base[name];
-        else
-            return null;
-    }
-
-    public static Texture GetTexture(string name)
-    {
-        if (texture_base.ContainsKey(name))
-            return texture_base[name];
-        else
-            return null;
-    }
-
+    
     public static void LoadTilemap(params TilemapCell[] cells)
     {
-        Texture tilemap = GetTexture("tilemap");
+        Texture tilemap = GetResource<Texture>("texture");
 
         if(tilemap != null)
         {
@@ -55,8 +38,8 @@ public static class Resourcepack
                     }
                 }
 
-                texture_base.Add(cell.name, texture);
-                sprite_base.Add(cell.name, new Sprite(texture));
+                AddAsset(cell.name, texture);
+                AddAsset(cell.name, new Sprite(texture));
             }
         }
     }
@@ -73,8 +56,31 @@ public static class Resourcepack
             Texture texture = new Texture(info.FullName);
             Sprite sprite = new Sprite(texture);
 
-            texture_base.Add(info.Name.Replace(".png", ""), texture);
-            sprite_base.Add(info.Name.Replace(".png", ""), sprite);
+            AddAsset(info.Name.Replace(".png", ""), texture);
+            AddAsset(info.Name.Replace(".png", ""), sprite);
+        }
+
+        foreach (var info in new DirectoryInfo(path).GetFiles("*.hlsl"))
+        {
+            Shader shader = new Shader(info.FullName);
+
+            AddAsset(info.Name.Replace(".hlsl", ""), shader);
+        }
+    }
+
+    public static void AddAsset(string name, object asset)
+    {
+        Asset value = asset as Asset;
+
+        if(value != null)
+        {
+            value.name = name;
+
+            assets.Add(value);
+        }
+        else 
+        {
+            throw new System.NotImplementedException($"asset type hasn't valid");
         }
     }
 }

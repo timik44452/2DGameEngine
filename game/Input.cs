@@ -12,11 +12,11 @@ public class Input
 
     public static bool IsKeyPress(string Name)
     {
-        return (CIntegrations.input_handler(Name[0]) & 0x8000) == 0x8000;
+        return false;// (CIntegrations.input_handler(Name[0]) & 0x8000) == 0x8000;
     }
 
     public static bool IsMousePress(MouseButton mouseButton)
     {
-        return (CIntegrations.input_handler((int)mouseButton) & 0x8000) == 0x8000;
+        return false;//(CIntegrations.input_handler((int)mouseButton) & 0x8000) == 0x8000;
     }
 }

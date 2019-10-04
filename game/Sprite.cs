@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-public class Sprite
+public class Sprite : Asset
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
