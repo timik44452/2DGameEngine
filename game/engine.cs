@@ -23,7 +23,7 @@ namespace WindowsFormsApp5
             }
 
             Resourcepack.Loadresources();
-            Resourcepack.LoadTilemap(new TilemapCell("grass", 640, 0, 32, 32));
+            Service.Tiling.LoadTilesFromMap("tilemap", new TilemapCell("grass", 640, 0, 32, 32));
 
             map = new World();
             input = new Input();

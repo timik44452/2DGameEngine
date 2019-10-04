@@ -76,6 +76,8 @@
       <DependentUpon>engine.cs</DependentUpon>
     </Compile>
     <Compile Include="Input.cs" />
+    <Compile Include="Service\ImageProcessor.cs" />
+    <Compile Include="Service\Tiling.cs" />
     <Compile Include="Shader.cs" />
     <Compile Include="TilemapCell.cs" />
     <Compile Include="Time.cs" />
@@ -116,5 +118,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -19,31 +19,6 @@ public static class Resourcepack
         }
     }
     
-    public static void LoadTilemap(params TilemapCell[] cells)
-    {
-        Texture tilemap = GetResource<Texture>("texture");
-
-        if(tilemap != null)
-        {
-            for (int k = 0; k < cells.Length; k++)
-            {
-                TilemapCell cell = cells[k];
-                Texture texture = new Texture(cell.Width, cell.Height);
-
-                for (int y = 0; y < cell.Height; y++)
-                {
-                    for (int x = 0; x < cell.Width; x++)
-                    {
-                        texture.SetPixel(x, y, tilemap.GetPixel(cell.X + x, cell.Y + y));
-                    }
-                }
-
-                AddAsset(cell.name, texture);
-                AddAsset(cell.name, new Sprite(texture));
-            }
-        }
-    }
-
     public static void Loadresources()
     {
         string path = @"Resources";
