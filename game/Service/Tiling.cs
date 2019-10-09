@@ -1,5 +1,5 @@
 ﻿
-namespace WindowsFormsApp5.Service
+namespace Service
 {
     public static class Tiling
     {
@@ -14,8 +14,7 @@ namespace WindowsFormsApp5.Service
                     TilemapCell cell = cells[k];
                     Texture tile = new Texture(cell.Width, cell.Height);
                     
-
-                    ImageProcessor.Copy(new Texture(cell.Width, cell.Height), tile);
+                    ImageProcessor.Copy(tilemap, tile, cell.X, cell.Y);
 
                     Resourcepack.AddAsset(cell.name, tile);
                     Resourcepack.AddAsset(cell.name, new Sprite(tile));
