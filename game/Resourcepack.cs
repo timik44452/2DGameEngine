@@ -8,7 +8,7 @@ public static class Resourcepack
 
     public static T GetResource<T>(string name) where T : Asset
     {
-        return (T)assets.Find(x => x.name == name);
+        return (T)assets.Find(x => x.GetType() == typeof(T) && x.name == name);
     }
 
     public static IEnumerator<T> GetResources<T>(params string[] names) where T : Asset
@@ -31,7 +31,7 @@ public static class Resourcepack
             Texture texture = new Texture(info.FullName);
             Sprite sprite = new Sprite(texture);
 
-            AddAsset(info.Name.Replace(".png", ""), texture);
+            AddAsset(info.Name.Replace(".png", ""), texture, info.FullName);
             AddAsset(info.Name.Replace(".png", ""), sprite);
         }
 
@@ -43,12 +43,13 @@ public static class Resourcepack
         }
     }
 
-    public static void AddAsset(string name, object asset)
+    public static void AddAsset(string name, object asset, string path = "local")
     {
         Asset value = asset as Asset;
 
         if(value != null)
         {
+            value.path = path;
             value.name = name;
 
             assets.Add(value);
