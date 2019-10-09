@@ -66,21 +66,13 @@ public class Texture : Asset
             Height = bitmap.Height;
             colors = new Color[Width * Height];
 
-            for(int x = 0; x < bitmap.Width; x++)
-                for(int y = 0; y < bitmap.Height; y++)
+            for (int x = 0; x < bitmap.Width; x++)
+                for (int y = 0; y < bitmap.Height; y++)
                 {
                     var color = bitmap.GetPixel(x, y);
 
                     colors[x + y * Width] = ColorHelper.GetColor(color.R, color.G, color.B, color.A);
                 }
-
-            //BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-            
-            //byte[] massive = new byte[bitmap.Width * bitmap.Height * 4];
-
-
-
-            //bitmap.UnlockBits(data);
         }
     }
 }

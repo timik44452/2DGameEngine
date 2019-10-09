@@ -6,11 +6,10 @@ namespace WindowsFormsApp5
     public partial class engine : Form
     {
         private const bool IsFullWindow = true;
-        private const int unitSize = 32;
+        private const int fixed_fps = 60;
 
         private World map;
         private Input input;
-        private Camera camera;
         
         public engine()
         {
@@ -29,28 +28,24 @@ namespace WindowsFormsApp5
             input = new Input();
         }
 
-        private void PaintScene()
-        {
-            Graphic.graphics.DrawGameObjects(camera, map.GetViewedObjects());
-
-            Input.WorldMousePosition = new Vector(MousePosition.X % Width, MousePosition.Y / Width);
-
-            Text = $"{1000 / Time.deltaTime} ms";
-        }
-
         private void Engine_Load(object sender, EventArgs e)
         {
-            camera = new Camera(new Rect(-unitSize, -unitSize, Width + unitSize, Height + unitSize));
-
             Graphic.Create(Width, Height, Handle);
 
-            var timer1 = new Timer();
+            Timer timer = new Timer();
+            timer.Interval = 1;
+            timer.Tick += PaintScene;
+            timer.Start();
+        }
 
-            timer1.Tick += (object s, EventArgs args) => PaintScene();
+        private void PaintScene(object sender, EventArgs e)
+        {
+            if (map.GetCameraObject() != null)
+                map.GetCameraObject().camera.Renderer();
 
-            timer1.Interval = 1;
+            Graphic.graphics.Draw();
 
-            timer1.Start();
+            Text = $"{1000 / Time.deltaTime} FPS";
         }
 
         private void engine_FormClosing(object sender, FormClosingEventArgs e)

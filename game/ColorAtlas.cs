@@ -1,6 +1,7 @@
 ﻿public static class ColorAtlas
 {
     public static Color Black { get; } = new Color(0, 0, 0, 1);
+    public static Color Gray { get; } = new Color(0.65F, 0.65F, 0.65F);
     public static Color Red { get; } = new Color(1, 0, 0, 1);
     public static Color Green { get; } = new Color(0, 1, 0, 1);
     public static Color Blue { get; } = new Color(0, 0, 1, 1);

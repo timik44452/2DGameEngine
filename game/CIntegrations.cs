@@ -21,10 +21,6 @@ public static class CIntegrations
             this.rgb = rgb;
         }
     }
-    public struct Vertex
-    {
-        public float x, y, z;
-    }
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
     public extern static int InitDevice(int Width, int Height, System.IntPtr context);
@@ -33,17 +29,21 @@ public static class CIntegrations
     public extern static int SetViewport(int Width, int Height);
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static int LoadShaders(ref char pixelShaderPath, ref char vertexShaderPath);
+    public extern static int LoadShaders(
+        [MarshalAs(UnmanagedType.LPWStr)]
+        string pixelShaderPath,
+        [MarshalAs(UnmanagedType.LPWStr)]
+        string vertexShaderPath);
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void Draw(int verticesCount, ref Vertex vertices);
+    public extern static int LoadTextureFromInt(ref int bytes, int width, int height);
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    public extern static void Draw(int verticesCount);
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
     public extern static void Release();
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void Init();
-
-    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void MessageDevice(string text, System.IntPtr context);
+    public extern static int UpdateBuffer(int verticesCount, ref Vertex vertices);
 }

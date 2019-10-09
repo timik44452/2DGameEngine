@@ -6,10 +6,6 @@
 
 static DirectXCore* core;
 
-extern "C" __declspec (dllexport) void _stdcall Init()
-{
-	core = new DirectXCore();
-}
 
 extern "C" __declspec (dllexport) int _stdcall InitDevice(int Width, int Height, HWND context)
 {
@@ -17,28 +13,26 @@ extern "C" __declspec (dllexport) int _stdcall InitDevice(int Width, int Height,
 	return core->DXInitDevice(Width, Height, context);
 }
 
-extern "C" __declspec (dllexport) void _stdcall MessageDevice(char* text, HWND context)
-{
-	//MessageBox(context, *str, L"", 0);
-}
-
-extern "C" _declspec (dllexport) int _stdcall SetViewport(int Width, int Height)
-{
-	return core->DXSetViewport(Width, Height);
-}
-
 extern "C" _declspec (dllexport) int _stdcall LoadShaders(
-	const char* pixelShaderPath,
-	const char* vertexShaderPath)
+	LPCWSTR pixelShaderPath,
+	LPCWSTR vertexShaderPath)
 {
-	return core->DXLoadShaders(pixelShaderPath, vertexShaderPath);
+	return  core->DXLoadShaders(pixelShaderPath, vertexShaderPath);
 }
 
-extern "C" __declspec (dllexport) void _stdcall Draw(int verticesCount, Vertex* vertices)
+extern "C" _declspec (dllexport) int _stdcall LoadTextureFromInt(int* src, int width, int height)
 {
-	core->DXDraw(verticesCount, vertices);
+	return core->LoadTexture(src, width, height);
 }
 
+extern "C" __declspec (dllexport) void _stdcall Draw(int verticesCount)
+{
+	core->DXDraw(verticesCount);
+}
+extern "C" __declspec (dllexport) int _stdcall UpdateBuffer(int verticesCount, Vertex * vertices)
+{
+	return core->DXUpdateVertexBuffer(verticesCount, vertices);
+}
 extern "C" __declspec (dllexport) void _stdcall Release()
 {
 	core->DXRelease();

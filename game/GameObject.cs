@@ -10,10 +10,12 @@ public class GameObject
     public int Layer { get; set; }
 
     public World world { get; set; }
+
     public Transform transform { get; private set; }
     public Renderer renderer { get; private set; }
     public PhysicBody physic { get; private set; }
     public Animation animation { get; private set; }
+    public Camera camera { get; private set; }
     public Light light { get; private set; }
 
 
@@ -29,7 +31,11 @@ public class GameObject
             return;
         }
 
-        if(component is PhysicBody)
+        if(component is Camera)
+        {
+            camera = component as Camera;
+        }
+        else if(component is PhysicBody)
         {
             physic = component as PhysicBody;
         }

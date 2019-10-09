@@ -1,278 +1,347 @@
 #pragma once
-#include<d3dcompiler.h>
+#include <windows.h>
+#include <d3d11.h>
+#include <D3DX11.h>
+#include <d3dcompiler.h>
 
 struct Vertex
 {
-	float x, y, z;
+	float x, y, z, u, v;
 };
 
 enum ERROR_CODE
 {
+	CREATE_TEXTURE_ERROR = 0x010101,
+	CREATE_SHADER_RESOURCE_ERROR = 0x010102,
+	LOAD_TEXTURE_ERROR = 0x010100,
 	PIXEL_SHADER_COMPILE_ERROR = 0x00101,
 	VERTEX_SHADER_COMPILE_ERROR = 0x00102,
 	PIXEL_SHADER_LOADING_ERROR = 0x00111,
 	VERTEX_SHADER_LOADING_ERROR = 0x00112,
+	CREATE_VERTEX_BUFFER_ERROR = 0x00113,
+	CREATE_INPUT_LAYOUT_ERROR = 0x00114,
+	CREATE_DEVICE_AND_SWAP_CHAIN_ERROR = 0x00115,
+	CREATE_BACK_BUFFER_ERROR = 0x00116,
+	CREATE_RENDERER_TARGET_ERROR = 0x00117,
 
-	NO_ERROR_CODE = 0x00055
+	NO_ERROR_CODE = NOERROR
 };
 
 class DirectXCore
 {
 public:
-	ID3D11Buffer* vertexBuffer;
+	Vertex*							sys_vertices = nullptr;
+	int								vertext_buffer_size = 0;
 
-	ID3D11Device* device;
-	ID3D11DeviceContext* deviceContext;
-	ID3D11RenderTargetView* renderTargetView;
 
-	ID3D11InputLayout* inputLayout;
-	ID3D11PixelShader* pixelShader;
-	ID3D11VertexShader* vertexShader;
+	D3D_FEATURE_LEVEL				g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 
-	IDXGISwapChain* swapChain;
+	ID3D11ShaderResourceView*		texture = nullptr;
+	ID3D11Device*					device = nullptr;
+	IDXGISwapChain*					swapChain = nullptr;
+	ID3D11SamplerState*				samplerState = nullptr;
+	ID3D11DeviceContext*			deviceContext = nullptr;
+	ID3D11PixelShader*				g_pPixelShader = nullptr;
+	ID3D11VertexShader*				g_pVertexShader = nullptr;
+	ID3D11InputLayout*				g_pVertexLayout = nullptr;
+	ID3D11Buffer*					g_pVertexBuffer = nullptr;
+	ID3D11RenderTargetView*			g_pRenderTargetView = nullptr;
+
 
 	int DXInitDevice(int Width, int Height, HWND context)
 	{
-		//UINT flags = 0;
-		DXGI_SWAP_CHAIN_DESC swapChainDesc;
+		HRESULT hr = S_OK;
 
-		// Разрмер совпадает с размером клиентской части окна
-		swapChainDesc.BufferDesc.Width = Width;
-		swapChainDesc.BufferDesc.Height = Height;
-		// Ограничение количества кадров в секунду задается в виде рационального числа
-		// Т.к. нам нужна максимальная частота кадров, отключаем
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
-		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-		// Формат вывода -- 32-битный RGBA
-		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		// Не задаем масштабирования при выводе
-		swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		// Не используем сглаживание
-		swapChainDesc.SampleDesc.Count = 1;
-		swapChainDesc.SampleDesc.Quality = 0;
-		// Используем SwapChain для вывода
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		// Один "задний" (не отображаемый) буфер
-		swapChainDesc.BufferCount = 1;
-		// Задаем окно для вывода
-		swapChainDesc.OutputWindow = context;
-		// Оконный режим
-		swapChainDesc.Windowed = TRUE;
-		// Отбрасываем старую информацию из буфера при выводе на экран
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-		swapChainDesc.Flags = 0;
+		UINT createDeviceFlags = 0;
 
-
-		// Используем DirectX 11.0, т.к. его нам достаточно
-		D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL::D3D_FEATURE_LEVEL_11_0;// D3D_FEATURE_LEVEL_11_0;
-
-		HRESULT result = D3D11CreateDeviceAndSwapChain(
-			// Используем видеоадаптер по-умолчанию
-			NULL,
-			// Используем аппаратную реализацию
-			D3D_DRIVER_TYPE_HARDWARE, NULL,
-			// См. выше
-			0,
-			// Используем одну версию DirectX
-			&featureLevel, 1,
-			// Версия SDK
-			D3D11_SDK_VERSION,
-			// Передаем созданное ранее описание
-			&swapChainDesc,
-			// Указатели, куда записать результат
-			&swapChain, &device, NULL, &deviceContext);
-
-		assert(SUCCEEDED(result));
-
-		Vertex vertices[]
+		D3D_DRIVER_TYPE driverTypes[] =
 		{
-			{ -1.0f, -1.0f, 0.0f },
-			{ 1.0f, 1.0f, 0.0f },
-			{ 1.0f, -1.0f, 0.0f },
+			D3D_DRIVER_TYPE_HARDWARE,
+			D3D_DRIVER_TYPE_WARP,
+			D3D_DRIVER_TYPE_REFERENCE,
 		};
 
-		D3D11_BUFFER_DESC bd = { 0 };
+		D3D_FEATURE_LEVEL featureLevels[] =
+		{
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_10_0,
+		};
 
-		bd.ByteWidth = sizeof(Vertex) * 3;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
-		D3D11_SUBRESOURCE_DATA srd = { vertices, 0, 0 };
+		DXGI_SWAP_CHAIN_DESC sd = {};
 
-		device->CreateBuffer(&bd, &srd, &vertexBuffer);
+		sd.BufferCount = 1;
+		sd.BufferDesc.Width = Width;
+		sd.BufferDesc.Height = Height;
+		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.RefreshRate.Numerator = 60;
+		sd.BufferDesc.RefreshRate.Denominator = 1;
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		sd.OutputWindow = context;
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;
+		sd.Windowed = TRUE;
 
-		return NO_ERROR_CODE;
-	}
+		for (UINT driverTypeIndex = 0; driverTypeIndex < ARRAYSIZE(driverTypes); driverTypeIndex++)
+		{
+			hr = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[driverTypeIndex], NULL, createDeviceFlags, featureLevels, numFeatureLevels,
+				D3D11_SDK_VERSION, &sd, &swapChain, &device, &g_featureLevel, &deviceContext);
 
-	int DXSetViewport(int Width, int Height)
-	{
-		CD3D11_VIEWPORT viewport;
+			if (SUCCEEDED(hr))
+				break;
+		}
 
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
+		if (FAILED(hr))
+		{
+			return CREATE_DEVICE_AND_SWAP_CHAIN_ERROR;
+		}
 
-		viewport.Width = Width;
-		viewport.Height = Height;
+		ID3D11Texture2D* pBackBuffer = NULL;
 
-		viewport.MinDepth = 0;
-		viewport.MaxDepth = 1;
+		hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
-		HRESULT result;
-		ID3D11Texture2D* backBuffer;
+		if (FAILED(hr))
+		{
+			return CREATE_BACK_BUFFER_ERROR;
+		}
 
-		// Берем "задний" буфер из SwapChain
-		result = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-		assert(SUCCEEDED(result));
+		hr = device->CreateRenderTargetView(pBackBuffer, NULL, &g_pRenderTargetView);
+		pBackBuffer->Release();
 
-		// Инициализируем доступ к буферу для записи и для отрисовки
-		result = device->CreateRenderTargetView(backBuffer, NULL, &renderTargetView);
-		assert(SUCCEEDED(result));
+		if (FAILED(hr))
+		{
+			return CREATE_RENDERER_TARGET_ERROR;
+		}
 
-		// Указатель на буфер больше нам не нужен
-		// Стоит отметить, что сам буфер при этом не удаляется,
-		// т.к. на него всё ещё указывает SwapChain,
-		// Release() лишь освобождает указатель
-		backBuffer->Release();
+		deviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, NULL);
 
-		// Используем созданный View для отрисовки
-		deviceContext->OMSetRenderTargets(1, &renderTargetView, NULL);
-		deviceContext->RSSetViewports(1, &viewport);
+		// Setup the viewport
+		D3D11_VIEWPORT vp;
+
+		vp.Width = (FLOAT)Width;
+		vp.Height = (FLOAT)Height;
+
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+
+		deviceContext->RSSetViewports(1, &vp);
+
+		ChangeVertexBufferSize(0);
+
+		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		return NO_ERROR_CODE;
 	}
 
 	int DXLoadShaders(
-		const char* pixelShaderPath,
-		const char* vertexShaderPath)
+		LPCWSTR pixelShaderPath,
+		LPCWSTR vertexShaderPath)
 	{
-		HRESULT result;
-		ID3DBlob* blob = NULL;
-		
-		result = D3DCompileFromFile(L"C:\pixelShader.hlsl", NULL, NULL, "main", "px_5_0", 0, 0, &blob, NULL);
-		
-		if (FAILED(result))
-		{
-			return PIXEL_SHADER_COMPILE_ERROR;
-		}
+		HRESULT hr = NULL;
 
-		result = D3DCompileFromFile((LPCWSTR)vertexShaderPath, NULL, NULL, "main", "vx_5_0", 0, 0, &blob, NULL);
+		ID3DBlob* pVSBlob = NULL;
+		ID3DBlob* pPSBlob = NULL;
 
-		if (FAILED(result))
+		hr = D3DX11CompileFromFile(vertexShaderPath, NULL, NULL, "main", "vs_5_0", 0, 0, NULL, &pVSBlob, NULL, NULL);
+		
+		if (FAILED(hr))
 		{
 			return VERTEX_SHADER_COMPILE_ERROR;
 		}
+
+		hr = device->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), NULL, &g_pVertexShader);
 		
-		result = device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), NULL, &pixelShader);
-
-		if (FAILED(result))
-		{
-			return PIXEL_SHADER_LOADING_ERROR;
-		}
-
-		result = device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), NULL, &vertexShader);
-
-		if (FAILED(result))
+		if (FAILED(hr))
 		{
 			return VERTEX_SHADER_LOADING_ERROR;
 		}
 
-		// Задаем, как в вершинный шейдер будут вводиться данные
-		// Описание первого (и единственного) аргумента функции
-		D3D11_INPUT_ELEMENT_DESC inputDesc;
-		// Семантическое имя аргумента
-		inputDesc.SemanticName = "POSITION";
-		// Нужно только в случае, если элементов с данным семантическим именем больше одного
-		inputDesc.SemanticIndex = 0;
-		// Двумерный вектор из 32-битных вещественных чисел
-		inputDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
-		// Необязательный аргумент
-		inputDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-		// Для каждой вершины
-		inputDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		// Первый параметр
-		inputDesc.InputSlot = 0;
-		// Используем вершины для отрисовки
-		inputDesc.InstanceDataStepRate = 0;
+		hr = D3DX11CompileFromFile(pixelShaderPath, NULL, NULL, "main", "ps_5_0", 0, 0, NULL, &pPSBlob, NULL, NULL);
 
-		result = device->CreateInputLayout(
-			// Массив описаний аргументов и его длина
-			&inputDesc, 1,
-			// Байткод и его длина
-			blob->GetBufferPointer(), blob->GetBufferSize(),
-			// Структура ввода
-			&inputLayout);
-		assert(SUCCEEDED(result));
+		if (FAILED(hr))
+		{
+			return PIXEL_SHADER_COMPILE_ERROR;
+		}
 
-		// Устанавливаем используемые шейдеры
-		// Вершинный
-		deviceContext->VSSetShader(vertexShader, NULL, 0);
-		// Пиксельный
-		deviceContext->PSSetShader(pixelShader, NULL, 0);
+		hr = device->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader);
 
-		// Устанавливаем доступ к буферу скоростей у вычислительного шейдера
-		// deviceContext->CSSetUnorderedAccessViews(1, 1, &velocityUAV, NULL);
-		// Устанавливаем способ записи аргументов вершинного шейдера
-		deviceContext->IASetInputLayout(inputLayout);
-		//// Рисовать будем точки
-		deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		pPSBlob->Release();
+
+		if (FAILED(hr))
+		{
+			return PIXEL_SHADER_LOADING_ERROR;
+		}
+
+		
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		UINT numElements = ARRAYSIZE(layout);
+
+		// Create the input layout
+		hr = device->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(),
+			pVSBlob->GetBufferSize(), &g_pVertexLayout);
+
+		D3D11_SAMPLER_DESC sampDesc = {};
+
+		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		hr = device->CreateSamplerState(&sampDesc, &samplerState);
+
+
+		pVSBlob->Release();
+
+		if (FAILED(hr))
+		{
+			return CREATE_INPUT_LAYOUT_ERROR;
+		}
+
+		deviceContext->IASetInputLayout(g_pVertexLayout);
+
+		deviceContext->PSSetSamplers(0, 1, &samplerState);
+		deviceContext->VSSetShader(g_pVertexShader, NULL, 0);
+		deviceContext->PSSetShader(g_pPixelShader, NULL, 0);
 
 		return NO_ERROR_CODE;
 	}
 
-	void DXDraw(int verticesCount, Vertex* vertices)
+	int LoadTexture(int* src, int width, int height)
 	{
-		// Очищаем буфер черным цветом
-		float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		deviceContext->ClearRenderTargetView(renderTargetView, clearColor);
+		DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;//::DXGI_FORMAT_R8G8B8A8_SINT;
+		D3D11_SUBRESOURCE_DATA initData = {};
+		D3D11_TEXTURE2D_DESC desc = {};
 
-		// Двумерные вектора из 32-битных вещественных идут подряд
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
+		initData.pSysMem = src;
+		initData.SysMemPitch = width * sizeof(src);
+		initData.SysMemSlicePitch = initData.SysMemPitch * height;
 
-		ID3D11Buffer* nullBuffer = NULL;
-		ID3D11UnorderedAccessView* nullUAV = NULL;
+		desc.Width = width;
+		desc.Height = height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = format;
+		desc.SampleDesc.Count = 1;
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
+		ID3D11Texture2D* tex;
 
-		deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+		HRESULT hr = device->CreateTexture2D(&desc, &initData, &tex);
 
-		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		if (SUCCEEDED(hr))
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 
-		// Вызываем отрисовку
-		deviceContext->Draw(3, 0);
+			SRVDesc.Format = format;
+			SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			SRVDesc.Texture2D.MipLevels = 1;
 
-		// Выводим изображение на экран
-		swapChain->Present(1, 0);
+			hr = device->CreateShaderResourceView(tex,
+				&SRVDesc, &texture);
+		}
+
+		if (FAILED(hr))
+		{
+			return CREATE_TEXTURE_ERROR;
+		}
+
+		deviceContext->PSSetShaderResources(0, 1, &texture);
+
+		return NO_ERROR_CODE;
+	}
+
+	int DXUpdateVertexBuffer(int verticesCount, Vertex* vertices)
+	{
+		int result = ChangeVertexBufferSize(verticesCount);
+
+		if (result != NO_ERROR_CODE)
+		{
+			return result;
+		}
+
+		D3D11_MAPPED_SUBRESOURCE mapped_vertices = {};
+
+		deviceContext->Map(g_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_vertices);
+		memcpy(mapped_vertices.pData, vertices, verticesCount * sizeof(Vertex));
+		deviceContext->Unmap(g_pVertexBuffer, 0);
+
+		return NO_ERROR_CODE;
+	}
+
+	void DXDraw(int verticesCount)
+	{
+		float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; // red,green,blue,alpha
+		deviceContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
+
+		deviceContext->Draw(verticesCount, 0);
+
+		swapChain->Present(0, 0);
+	}
+
+	int ChangeVertexBufferSize(int size)
+	{
+		if (size > vertext_buffer_size)
+		{
+			if (sys_vertices) delete[] sys_vertices;
+
+			sys_vertices = new Vertex[size];
+
+			D3D11_BUFFER_DESC bd = {};
+			D3D11_SUBRESOURCE_DATA InitData = {};
+
+			bd.Usage = D3D11_USAGE_DYNAMIC;
+			bd.ByteWidth = sizeof(Vertex) * size;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+			InitData.pSysMem = sys_vertices;
+
+			HRESULT hr = device->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
+
+			if (FAILED(hr))
+			{
+				return CREATE_VERTEX_BUFFER_ERROR;
+			}
+
+			UINT offset = 0;
+			UINT stride = sizeof(Vertex);
+
+			deviceContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+
+			vertext_buffer_size = size;
+		}
+
+		return NO_ERROR_CODE;
 	}
 
 	void DXRelease()
-	{
-		DXReleaseBuffer();
-		DXReleaseDevice();
-		DXReleaseShaders();
-		DXReleaseRenderTarget();
-	}
-private :
-	void DXReleaseBuffer()
-	{
-		vertexBuffer->Release();
-	}
+	{	
+		if (sys_vertices) delete[] sys_vertices;
+		if (deviceContext) deviceContext->ClearState();
 
-	void DXReleaseDevice()
-	{
-		device->Release();
-		deviceContext->Release();
-		swapChain->Release();
-	}
-
-	void DXReleaseShaders()
-	{
-		pixelShader->Release();
-		vertexShader->Release();
-		inputLayout->Release();
-	}
-
-	void DXReleaseRenderTarget()
-	{
-		renderTargetView->Release();
+		if (texture) texture->Release();
+		if (samplerState) samplerState->Release();
+		if (g_pVertexBuffer) g_pVertexBuffer->Release();
+		if (g_pVertexLayout) g_pVertexLayout->Release();
+		if (g_pVertexShader) g_pVertexShader->Release();
+		if (g_pPixelShader) g_pPixelShader->Release();
+		if (g_pRenderTargetView) g_pRenderTargetView->Release();
+		if (swapChain) swapChain->Release();
+		if (deviceContext) deviceContext->Release();
+		if (device) device->Release();
 	}
 };

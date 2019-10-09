@@ -1,11 +1,15 @@
-﻿public class Camera
+﻿public class Camera : Component
 {
-    public Camera(Rect rect)
+    public Camera()
     {
-        viewport = rect;
+        //viewport = rect;
     }
 
-    public Vector position { get; set; }
-    public Rect viewport { get; private set; }
+    public Rect viewport { get; set; }
 
+
+    public void Renderer()
+    {
+        Graphic.graphics.DrawGameObjects(this, gameObject.world.GetViewedObjects());
+    }
 }

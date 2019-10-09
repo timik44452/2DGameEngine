@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{70DDB457-500F-47B8-A059-7E20D6F11DED}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>WindowsFormsApp5</RootNamespace>
     <AssemblyName>WindowsFormsApp5</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,10 +63,12 @@
     <Compile Include="Component.cs" />
     <Compile Include="Draggable.cs" />
     <Compile Include="dynamicAnimationGenerator.cs" />
+    <Compile Include="GameDebug.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Graphic.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="LightMap.cs" />
+    <Compile Include="Matrix.cs" />
     <Compile Include="PhysicBody.cs" />
     <Compile Include="Raycaster.cs" />
     <Compile Include="Rect.cs" />
@@ -78,9 +83,11 @@
     <Compile Include="Input.cs" />
     <Compile Include="Service\ImageProcessor.cs" />
     <Compile Include="Service\Tiling.cs" />
+    <Compile Include="Service\TypeConverter.cs" />
     <Compile Include="Shader.cs" />
     <Compile Include="TilemapCell.cs" />
     <Compile Include="Time.cs" />
+    <Compile Include="Vertex.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 public class Sprite : Asset
 {
@@ -30,9 +29,7 @@ public class Sprite : Asset
         for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
-                SetColor(x, y, texture.GetColor(x / (float)Width, y / (float)Height));
-
-                //colors[x + y * Width] = new CIntegrations.Color(color.R, color.G, color.B, color.A, color.rgb);
+                SetColor(x , y, texture.GetColor(x / (float)Width, y / (float)Height));  
             }
     }
 
@@ -40,9 +37,27 @@ public class Sprite : Asset
     {
         int index = x + y * Width;
 
-        if(index >= 0 && index < colors.Length)
+        if (index >= 0 && index < colors.Length)
         {
-            colors[x + y * Width] = color;
+            Buffer[index] = color.GetBInt32() << 16 | color.GetGInt32() << 8 | color.GetRInt32();
+
+            colors[index] = color;
         }
+    }
+
+    public void SetColor(int x, int y, int v)
+    {
+        int index = x + y * Width;
+
+        if (index >= 0 && index < colors.Length)
+        {
+            Buffer[index] = v;
+
+        }
+    }
+
+    public void Save(string path)
+    {
+        Service.ImageProcessor.Save(path, Buffer, Width, Height);
     }
 }

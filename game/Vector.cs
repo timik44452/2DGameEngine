@@ -61,9 +61,17 @@ public struct Vector
         Recalculate();
     }
 
+    public void SetXY(float X, float Y)
+    {
+        x = X;
+        y = Y;
+
+        Recalculate();
+    }
+
     private void Recalculate()
     {
-        length = (float)Math.Sqrt(x * x + y * y);
+        //length = (float)Math.Sqrt(x * x + y * y);
     }
 
     public static Vector Lerp(Vector from, Vector to, float t)
@@ -82,23 +90,33 @@ public struct Vector
     }
     public static Vector operator -(Vector a, Vector b)
     {
-        return new Vector(a.X - b.X, a.Y - b.Y);
+        a.SetXY(a.X - b.X, a.Y - b.Y);
+
+        return a;
     }
     public static Vector operator +(Vector a, Vector b)
     {
-        return new Vector(a.X + b.X, a.Y + b.Y);
+        a.SetXY(a.X + b.X, a.Y + b.Y);
+
+        return a;
     }
     public static Vector operator *(float b, Vector a)
     {
-        return new Vector(a.X * b, a.Y * b);
+        a.SetXY(a.X * b, a.Y * b);
+
+        return a;
     }
     public static Vector operator *(Vector a, float b)
     {
-        return new Vector(a.X * b, a.Y * b);
+        a.SetXY(a.X * b, a.Y * b);
+
+        return a;
     }
     public static Vector operator /(Vector a, float b)
     {
-        return new Vector(a.X / b, a.Y / b);
+        a.SetXY(a.X / b, a.Y / b);
+
+        return a;
     }
 
     public override bool Equals(object obj)
