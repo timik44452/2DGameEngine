@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{70DDB457-500F-47B8-A059-7E20D6F11DED}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>WindowsFormsApp5</RootNamespace>
     <AssemblyName>WindowsFormsApp5</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -66,6 +66,7 @@
     <Compile Include="GameDebug.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Graphic.cs" />
+    <Compile Include="IControlBehaviour.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="LightMap.cs" />
     <Compile Include="Matrix.cs" />
@@ -81,6 +82,14 @@
       <DependentUpon>engine.cs</DependentUpon>
     </Compile>
     <Compile Include="Input.cs" />
+    <Compile Include="RendererBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RendererBox.Designer.cs">
+      <DependentUpon>RendererBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RendererQueue.cs" />
+    <Compile Include="RendererQueueItem.cs" />
     <Compile Include="Service\ImageProcessor.cs" />
     <Compile Include="Service\Tiling.cs" />
     <Compile Include="Service\TypeConverter.cs" />
@@ -112,6 +121,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RendererBox.resx">
+      <DependentUpon>RendererBox.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

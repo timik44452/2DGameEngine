@@ -28,20 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.rendererBox = new WindowsFormsApp5.RendererBox();
             this.SuspendLayout();
+            // 
+            // rendererBox
+            // 
+            this.rendererBox.BackColor = System.Drawing.SystemColors.WindowText;
+            this.rendererBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rendererBox.Location = new System.Drawing.Point(0, 0);
+            this.rendererBox.Name = "rendererBox";
+            this.rendererBox.Size = new System.Drawing.Size(1264, 681);
+            this.rendererBox.TabIndex = 0;
             // 
             // engine
             // 
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.rendererBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "engine";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.engine_FormClosing);
-            this.Load += new System.EventHandler(this.Engine_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClose);
+            this.Load += new System.EventHandler(this.OnLoad);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private RendererBox rendererBox;
     }
 }
 

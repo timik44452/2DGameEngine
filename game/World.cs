@@ -25,21 +25,30 @@ public class World
         cameraObject.AddComponent(new Camera());
         cameraObject.GetComponent<Camera>().viewport = new Rect(-20, -12, 40, 24);
 
-        var renderer = new Renderer(Resourcepack.GetResource<Sprite>("grass"));
+        var renderer0 = new Renderer(Resourcepack.GetResource<Sprite>("grass"));
+        var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
 
-        for (int x = -100; x < 100; x++)
+        for (int x = -10; x < 10; x++)
         {
-            for (int y = -100; y < 100; y++)
+            for (int y = -10; y < 10; y++)
             {
                 GameObject gameObject = new GameObject();
 
                 gameObject.Layer = 1;
                 gameObject.transform.position = new Vector(x, y);
-                gameObject.AddComponent(renderer);
+                gameObject.AddComponent(renderer0);
 
                 CreateGameObject(gameObject);
             }
         }
+
+        GameObject _gameObject = new GameObject();
+
+        _gameObject.Layer = 0;
+        _gameObject.transform.position = new Vector(3, 4);
+        _gameObject.AddComponent(renderer1);
+
+        CreateGameObject(_gameObject);
 
         CreateGameObject(cameraObject);
     }

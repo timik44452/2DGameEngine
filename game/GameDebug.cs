@@ -26,6 +26,13 @@ public static class GameDebug
     }
     public static void DXLog(int code)
     {
-       Log($"DirectX error:{(ERROR_CODE)code}");
+        ERROR_CODE error_code = (ERROR_CODE)code;
+
+        if (error_code != ERROR_CODE.NO_ERROR_CODE)
+        {
+            System.Windows.Forms.MessageBox.Show($"DirectX error:{error_code}");
+        }
+
+        Log($"DirectX error:{error_code}");
     }
 }

@@ -20,14 +20,19 @@ extern "C" _declspec (dllexport) int _stdcall LoadShaders(
 	return  core->DXLoadShaders(pixelShaderPath, vertexShaderPath);
 }
 
-extern "C" _declspec (dllexport) int _stdcall LoadTextureFromInt(int* src, int width, int height)
+extern "C" _declspec (dllexport) int _stdcall LoadTextureFromInt(int* src,int textureSlot, int width, int height)
 {
-	return core->LoadTexture(src, width, height);
+	return core->LoadTexture(src,textureSlot, width, height);
 }
 
-extern "C" __declspec (dllexport) void _stdcall Draw(int verticesCount)
+extern "C" __declspec (dllexport) void _stdcall ClearBackground(float r, float g, float b)
 {
-	core->DXDraw(verticesCount);
+	core->ClearBackground(r, g, b);
+}
+
+extern "C" __declspec (dllexport) void _stdcall Draw(int startIndex, int verticesCount, int textureSlot)
+{
+	core->DXDraw(startIndex, verticesCount, textureSlot);
 }
 extern "C" __declspec (dllexport) int _stdcall UpdateBuffer(int verticesCount, Vertex * vertices)
 {

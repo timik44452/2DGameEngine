@@ -16,8 +16,9 @@ public class Graphic
 
     private int[] data;
     private int[] layersBuffer;
+    private uint[] loaded_sprites;
 
-    private Vertex[] vertices = new Vertex[6];
+    private RendererQueue rendererQueue;
     private Matrix viewMatrix;
 
     private Graphic(int width, int height)
@@ -27,12 +28,15 @@ public class Graphic
 
         bufferSize = width * height;
 
+        loaded_sprites = new uint[0];
         layersBuffer = new int[bufferSize];
         data = new int[bufferSize];
 
         viewMatrix = new Matrix(
             100F / width, 0,
             0, 100F / height);
+
+        rendererQueue = new RendererQueue();
 
         graphics = this;
     }
@@ -42,11 +46,7 @@ public class Graphic
         var pixelShader = Resourcepack.GetResource<Shader>("pixelShader");
         var vertexShader = Resourcepack.GetResource<Shader>("vertexShader");
 
-        var sprite = Resourcepack.GetResource<Sprite>("grass");
-
         GameDebug.DXLog(CIntegrations.InitDevice(width, height, handle));
-
-        GameDebug.DXLog(CIntegrations.LoadTextureFromInt(ref sprite.Buffer[0], sprite.Width, sprite.Height));
         GameDebug.DXLog(CIntegrations.LoadShaders(pixelShader.path, vertexShader.path));
 
         return new Graphic(width, height);
@@ -56,23 +56,24 @@ public class Graphic
     {
         old_frame_time = DateTime.Now;
 
-        int vertexLength = gameObjects.Length * 6;
+        rendererQueue.CheckVertexBuffer(gameObjects.Length * 6);
 
-        if (vertexLength > vertices.Length)
-            ResizeVertexBuffer(vertexLength);
-        
         for (int i = 0; i < gameObjects.Length; i++)
             DrawGameObject(camera, gameObjects[i], i);
-            
-        CIntegrations.UpdateBuffer(vertexLength, ref vertices[0]);
 
-        //old_frame_time = new_frame_time;
+        CIntegrations.UpdateVertexBuffer(rendererQueue.VertexBuffer);
+
         new_frame_time = DateTime.Now;
     }
 
     public void Draw()
     {
-        CIntegrations.Draw(vertices.Length);
+        CIntegrations.ClearBackground(ColorAtlas.Black);
+
+        foreach (RendererQueueItem item in rendererQueue.RendererItems)
+            CIntegrations.Draw(item.VertexIndex, item.VertexCount, item.sprite);
+
+        rendererQueue.ResetQueueIndex();
     }
 
     private void DrawGameObject(Camera camera, GameObject gameObject, int i)
@@ -85,77 +86,24 @@ public class Graphic
 
         if (sprite != null && camera.viewport.Contain(gameObject.transform.position))
         {
-            //      p1
-            // d----b
-            // |   /|
-            // |  / |
-            // | /  |
-            // |/   |
-            // a ---c
-            //p0
-
             Vector delta = gameObject.transform.scale * 0.5f;
             Vector worldTransform = gameObject.transform.position - camera.gameObject.transform.position;
 
-            Vector point0 = Matrix.Multiply(viewMatrix, worldTransform - delta);
-            Vector point1 = Matrix.Multiply(viewMatrix, worldTransform + delta);
+            rendererQueue.SetVertexBufferItem(i, gameObject.Layer, sprite,
+                Matrix.Multiply(viewMatrix, worldTransform - delta),
+                Matrix.Multiply(viewMatrix, worldTransform + delta));
 
-            vertices[i].x = point0.X;
-            vertices[i].y = point0.Y;
+            for (int l = 0; l < loaded_sprites.Length; l++)
+                if (loaded_sprites[l] == sprite.UID)
+                    return;
 
-            vertices[i + 1].x = point1.X;
-            vertices[i + 1].y = point1.Y;
+            GameDebug.DXLog(CIntegrations.CreateDXResource(sprite));
 
-            vertices[i + 2].x = point1.X;
-            vertices[i + 2].y = point0.Y;
-
-
-            vertices[i + 3].x = point0.X;
-            vertices[i + 3].y = point0.Y;
-
-            vertices[i + 4].x = point0.X;
-            vertices[i + 4].y = point1.Y;
-
-            vertices[i + 5].x = point1.X;
-            vertices[i + 5].y = point1.Y;
+            var temp = loaded_sprites;
+            loaded_sprites = new uint[temp.Length + 1];
+            temp.CopyTo(loaded_sprites, 0);
+            loaded_sprites[temp.Length] = sprite.UID;
         }
     }
-    private void ResizeVertexBuffer(int size)
-    {
-        vertices = new Vertex[size];
-
-        // d----b
-        // |   /|
-        // |  / |
-        // | /  |
-        // |/   |
-        // a ---c
-
-        for (int i = 0; i < size; i+=6)
-        {
-            //a
-            vertices[i].u = 0;
-            vertices[i].v = 1;
-
-            //b
-            vertices[i + 1].u = 1;
-            vertices[i + 1].v = 0;
-
-            //c
-            vertices[i + 2].u = 1;
-            vertices[i + 2].v = 1;
-
-            //a
-            vertices[i + 3].u = 0;
-            vertices[i + 3].v = 1;
-
-            //d
-            vertices[i + 4].u = 0;
-            vertices[i + 4].v = 0;
-
-            //b
-            vertices[i + 5].u = 1;
-            vertices[i + 5].v = 0;
-        }
-    }
+    
 }

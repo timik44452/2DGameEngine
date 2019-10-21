@@ -2,7 +2,12 @@
 #include <windows.h>
 #include <d3d11.h>
 #include <D3DX11.h>
+#include <map>
+#include <algorithm>
+#include <wrl/client.h>
 #include <d3dcompiler.h>
+
+using namespace Microsoft::WRL;
 
 struct Vertex
 {
@@ -36,16 +41,16 @@ public:
 
 	D3D_FEATURE_LEVEL				g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 
-	ID3D11ShaderResourceView*		texture = nullptr;
-	ID3D11Device*					device = nullptr;
-	IDXGISwapChain*					swapChain = nullptr;
-	ID3D11SamplerState*				samplerState = nullptr;
-	ID3D11DeviceContext*			deviceContext = nullptr;
-	ID3D11PixelShader*				g_pPixelShader = nullptr;
-	ID3D11VertexShader*				g_pVertexShader = nullptr;
-	ID3D11InputLayout*				g_pVertexLayout = nullptr;
-	ID3D11Buffer*					g_pVertexBuffer = nullptr;
-	ID3D11RenderTargetView*			g_pRenderTargetView = nullptr;
+	std::map<int, ID3D11ShaderResourceView*>	textures;
+	ID3D11Device*							device = nullptr;
+	IDXGISwapChain*							swapChain = nullptr;
+	ID3D11SamplerState*						samplerState = nullptr;
+	ID3D11DeviceContext*					deviceContext = nullptr;
+	ID3D11PixelShader*						g_pPixelShader = nullptr;
+	ID3D11VertexShader*						g_pVertexShader = nullptr;
+	ID3D11InputLayout*						g_pVertexLayout = nullptr;
+	ID3D11Buffer*							g_pVertexBuffer = nullptr;
+	ID3D11RenderTargetView*					g_pRenderTargetView = nullptr;
 
 
 	int DXInitDevice(int Width, int Height, HWND context)
@@ -135,6 +140,8 @@ public:
 
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+		//textures = std::vector<ID3D11ShaderResourceView**>();
+
 		return NO_ERROR_CODE;
 	}
 
@@ -219,7 +226,7 @@ public:
 		return NO_ERROR_CODE;
 	}
 
-	int LoadTexture(int* src, int width, int height)
+	int LoadTexture(int* src, int textureSlot, int width, int height)
 	{
 		DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;//::DXGI_FORMAT_R8G8B8A8_SINT;
 		D3D11_SUBRESOURCE_DATA initData = {};
@@ -251,7 +258,7 @@ public:
 			SRVDesc.Texture2D.MipLevels = 1;
 
 			hr = device->CreateShaderResourceView(tex,
-				&SRVDesc, &texture);
+				&SRVDesc, &textures[textureSlot]);
 		}
 
 		if (FAILED(hr))
@@ -259,7 +266,6 @@ public:
 			return CREATE_TEXTURE_ERROR;
 		}
 
-		deviceContext->PSSetShaderResources(0, 1, &texture);
 
 		return NO_ERROR_CODE;
 	}
@@ -282,12 +288,17 @@ public:
 		return NO_ERROR_CODE;
 	}
 
-	void DXDraw(int verticesCount)
+	void ClearBackground(float r, float g, float b)
 	{
-		float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; // red,green,blue,alpha
+		float ClearColor[4] = { r, g, b, 1.0f }; // red,green,blue,alpha
 		deviceContext->ClearRenderTargetView(g_pRenderTargetView, ClearColor);
+	}
 
-		deviceContext->Draw(verticesCount, 0);
+	void DXDraw(int startIndex, int verticesCount, UINT textureSlot)
+	{
+		deviceContext->PSSetShaderResources(0, 1, &textures[textureSlot]);
+
+		deviceContext->Draw(verticesCount, startIndex);
 
 		swapChain->Present(0, 0);
 	}
@@ -333,7 +344,12 @@ public:
 		if (sys_vertices) delete[] sys_vertices;
 		if (deviceContext) deviceContext->ClearState();
 
-		if (texture) texture->Release();
+		//TODO:Memmory allocation not implement
+		/*std::for_each(textures.begin(), textures.end(), [](auto texture)
+			{
+				((ID3D11ShaderResourceView*)texture)->Release();
+			});*/
+
 		if (samplerState) samplerState->Release();
 		if (g_pVertexBuffer) g_pVertexBuffer->Release();
 		if (g_pVertexLayout) g_pVertexLayout->Release();

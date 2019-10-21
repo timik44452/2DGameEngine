@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Linq;
+using System.IO;
 using System.Collections.Generic;
 
 
@@ -49,6 +50,7 @@ public static class Resourcepack
 
         if(value != null)
         {
+            value.UID = GetNextUID();
             value.path = path;
             value.name = name;
 
@@ -58,5 +60,15 @@ public static class Resourcepack
         {
             throw new System.NotImplementedException($"asset type hasn't valid");
         }
+    }
+
+    private static uint GetNextUID()
+    {
+        if(assets.Count == 0)
+        {
+            return 0;
+        }
+
+        return assets.Max(x => x.UID) + 1;
     }
 }

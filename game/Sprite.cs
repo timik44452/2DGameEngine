@@ -33,6 +33,11 @@ public class Sprite : Asset
             }
     }
 
+    public void Apply()
+    {
+        GameDebug.DXLog(CIntegrations.CreateDXResource(this));
+    }
+
     public void SetColor(int x, int y, Color color)
     {
         int index = x + y * Width;
@@ -42,17 +47,6 @@ public class Sprite : Asset
             Buffer[index] = color.GetBInt32() << 16 | color.GetGInt32() << 8 | color.GetRInt32();
 
             colors[index] = color;
-        }
-    }
-
-    public void SetColor(int x, int y, int v)
-    {
-        int index = x + y * Width;
-
-        if (index >= 0 && index < colors.Length)
-        {
-            Buffer[index] = v;
-
         }
     }
 

@@ -6,11 +6,9 @@ namespace WindowsFormsApp5
     public partial class engine : Form
     {
         private const bool IsFullWindow = true;
-        private const int fixed_fps = 60;
-
-        private World map;
-        private Input input;
         
+        private IControlBehaviour control;
+
         public engine()
         {
             InitializeComponent();
@@ -21,36 +19,29 @@ namespace WindowsFormsApp5
                 WindowState = FormWindowState.Maximized;
             }
 
-            Resourcepack.Loadresources();
-            Service.Tiling.LoadTilesFromMap("tilemap", new TilemapCell("grass", 640, 0, 32, 32));
-
-            map = new World();
-            input = new Input();
-        }
-
-        private void Engine_Load(object sender, EventArgs e)
-        {
-            Graphic.Create(Width, Height, Handle);
+            control = rendererBox;
 
             Timer timer = new Timer();
+            timer.Tick += (s, e) => OnPaintScene(s);
             timer.Interval = 1;
-            timer.Tick += PaintScene;
             timer.Start();
         }
 
-        private void PaintScene(object sender, EventArgs e)
+        private void OnPaintScene(object sender)
         {
-            if (map.GetCameraObject() != null)
-                map.GetCameraObject().camera.Renderer();
+            control?.OnPaint(sender);
 
-            Graphic.graphics.Draw();
-
-            Text = $"{1000 / Time.deltaTime} FPS";
+            Text = $"FPS:{1000 / Time.deltaTime}";
         }
 
-        private void engine_FormClosing(object sender, FormClosingEventArgs e)
+        private void OnClose(object sender, FormClosingEventArgs e)
         {
-            CIntegrations.Release();
+            control?.OnClosed(sender);
+        }
+
+        private void OnLoad(object sender, EventArgs e)
+        {
+            control?.OnLoad(sender);
         }
     }
 }

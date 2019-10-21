@@ -1,26 +1,27 @@
-﻿
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 public static class CIntegrations
 {
-    public struct Color
+    public static int CreateDXResource(Sprite sprite)
     {
-        private float r;
-        private float g;
-        private float b;
-        private float a;
-
-        public int rgb;
-
-        public Color(float r, float g, float b, float a, int rgb)
-        {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
-            this.rgb = rgb;
-        }
+        return LoadTextureFromInt(ref sprite.Buffer[0], sprite.UID, sprite.Width, sprite.Height);
     }
+
+    public static void Draw(int vertexIndex, int vertexCount, Sprite sprite)
+    {
+        Draw(vertexIndex, vertexCount, sprite.UID);
+    }
+
+    public static void ClearBackground(Color color)
+    {
+        ClearBackground(color.R, color.G, color.B);
+    }
+
+    public static int UpdateVertexBuffer(Vertex[] vertices)
+    {
+        return UpdateBuffer(vertices.Length, ref vertices[0]);
+    }
+
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
     public extern static int InitDevice(int Width, int Height, System.IntPtr context);
@@ -36,14 +37,18 @@ public static class CIntegrations
         string vertexShaderPath);
 
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static int LoadTextureFromInt(ref int bytes, int width, int height);
-
-    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static void Draw(int verticesCount);
-
-    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
     public extern static void Release();
 
+
     [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
-    public extern static int UpdateBuffer(int verticesCount, ref Vertex vertices);
+    private extern static int UpdateBuffer(int verticesCount, ref Vertex vertices);
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    private extern static int LoadTextureFromInt(ref int bytes, uint textureSlot, int width, int height);
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    private extern static void Draw(int startIndex, int verticesCount, uint textureSlot);
+
+    [DllImport("GraphicCore", CallingConvention = CallingConvention.StdCall)]
+    private extern static void ClearBackground(float r, float g, float b);
 }
