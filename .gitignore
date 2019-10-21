@@ -21,6 +21,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+!GraphicCore/Lib/x64/
+!GraphicCore/Lib/x86/
 
 # Visual Studio 2015 cache/options directory
 .vs/
