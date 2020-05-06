@@ -4,12 +4,12 @@ public static class CIntegrations
 {
     public static int CreateDXResource(Sprite sprite)
     {
-        return LoadTextureFromInt(ref sprite.Buffer[0], sprite.UID, sprite.Width, sprite.Height);
+        return LoadTextureFromInt(ref sprite.Buffer[0], (uint)sprite.UID, sprite.Width, sprite.Height);
     }
 
     public static void Draw(int vertexIndex, int vertexCount, Sprite sprite)
     {
-        Draw(vertexIndex, vertexCount, sprite.UID);
+        Draw(vertexIndex, vertexCount, (uint)sprite.UID);
     }
 
     public static void ClearBackground(Color color)

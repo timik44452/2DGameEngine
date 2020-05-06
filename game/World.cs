@@ -1,7 +1,4 @@
-﻿
-using System;
-
-public class World
+﻿public class World
 {
     private GameObject camera;
     private GameObject[] allObjects;

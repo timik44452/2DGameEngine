@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <d3d11.h>
-#include <D3DX11.h>
+//#include <D3DX11.h>
 #include <map>
 #include <algorithm>
 #include <wrl/client.h>
@@ -154,7 +154,8 @@ public:
 		ID3DBlob* pVSBlob = NULL;
 		ID3DBlob* pPSBlob = NULL;
 
-		hr = D3DX11CompileFromFile(vertexShaderPath, NULL, NULL, "main", "vs_5_0", 0, 0, NULL, &pVSBlob, NULL, NULL);
+		//hr = D3DX11CompileFromFile(vertexShaderPath, NULL, NULL, "main", "vs_5_0", 0, 0, NULL, &pVSBlob, NULL, NULL);
+		//hr = D3DCompileFromFile(vertexShaderPath, NULL, NULL, "main", "vs_5_0", 0, 0, NULL, &pVSBlob);
 		
 		if (FAILED(hr))
 		{
@@ -168,7 +169,7 @@ public:
 			return VERTEX_SHADER_LOADING_ERROR;
 		}
 
-		hr = D3DX11CompileFromFile(pixelShaderPath, NULL, NULL, "main", "ps_5_0", 0, 0, NULL, &pPSBlob, NULL, NULL);
+		//hr = D3DX11CompileFromFile(pixelShaderPath, NULL, NULL, "main", "ps_5_0", 0, 0, NULL, &pPSBlob, NULL, NULL);
 
 		if (FAILED(hr))
 		{
