@@ -5,6 +5,7 @@
     private GameObject[] drawbleObjects;
     private GameObject[] physicActiveObjects;
     private GameObject[] lightObjects;
+    private GameObject[] collidingObjects;
 
     public World()
     {
@@ -12,6 +13,7 @@
         drawbleObjects = new GameObject[0];
         physicActiveObjects = new GameObject[0];
         lightObjects = new GameObject[0];
+        collidingObjects = new GameObject[0];
 
         Fill();
     }
@@ -26,11 +28,16 @@
         var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
         var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("wx"));
 
+        var physicBody = new PhysicBody();
+        physicBody.velocity = Vector.right * 0.02f;
+        physicBody.Damping = 1;
+
         GameObject _gameObject = new GameObject();
 
         _gameObject.Layer = 1;
         _gameObject.transform.position = new Vector(0, 0);
         _gameObject.AddComponent(renderer1);
+        _gameObject.AddComponent(physicBody);
 
         CreateGameObject(_gameObject);
 
@@ -47,6 +54,9 @@
 
         if (gameObject.light != null)
             Remove(ref lightObjects, gameObject);
+
+        if (gameObject.collider != null)
+            Remove(ref collidingObjects, gameObject);
 
         Remove(ref allObjects, gameObject);
     }
@@ -67,6 +77,9 @@
 
         if (gameObject.light != null)
             Add(ref lightObjects, gameObject);
+
+        if (gameObject.collider != null)
+            Add(ref collidingObjects, gameObject);
 
         Add(ref allObjects, gameObject);
 
@@ -115,6 +128,11 @@
     public GameObject[] GetLightObjects()
     {
         return lightObjects;
+    }
+
+    public GameObject[] GetCollidingObjects()
+    {
+        return collidingObjects;
     }
 
     public GameObject[] GetAllObjects()

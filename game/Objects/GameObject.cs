@@ -13,6 +13,7 @@ public class GameObject
     public Animation animation { get; private set; }
     public Camera camera { get; private set; }
     public Light light { get; private set; }
+    public Collider collider { get; private set; }
 
 
     private Component[] components = new Component[0];
@@ -53,6 +54,10 @@ public class GameObject
         else if (component is Light)
         {
             light = component as Light;
+        }
+        else if (component is Collider)
+        {
+            collider = component as Collider;
         }
 
         component.gameObject = this;

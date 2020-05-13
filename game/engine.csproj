@@ -55,8 +55,10 @@
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Audio\Audio.cs" />
     <Compile Include="Audio\AudioClip.cs" />
+    <Compile Include="Components\BoxCollider.cs" />
     <Compile Include="Components\Camera.cs" />
     <Compile Include="CIntegrations.cs" />
+    <Compile Include="Components\Collider.cs" />
     <Compile Include="Graphics\GDI\GDIHelper.cs" />
     <Compile Include="Math\Matrix3x3.cs" />
     <Compile Include="Objects\Color.cs" />
