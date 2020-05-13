@@ -26,13 +26,17 @@
         var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
         var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("wx"));
 
-        GameObject _gameObject = new GameObject();
+        for (int y = -10; y < 10; y++)
+            for (int x = -10; x < 10; x++)
+            {
+                GameObject _gameObject = new GameObject();
 
-        _gameObject.Layer = 1;
-        _gameObject.transform.position = new Vector(0, 0);
-        _gameObject.AddComponent(renderer1);
+                _gameObject.Layer = 1;
+                _gameObject.transform.position = new Vector(x, y);
+                _gameObject.AddComponent(renderer1);
 
-        CreateGameObject(_gameObject);
+                CreateGameObject(_gameObject);
+            }
 
         CreateGameObject(cameraObject);
     }

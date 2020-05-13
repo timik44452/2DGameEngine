@@ -1,4 +1,6 @@
-﻿public class Camera : Component
+﻿using System.Threading.Tasks;
+
+public class Camera : Component
 {
     public Camera()
     {

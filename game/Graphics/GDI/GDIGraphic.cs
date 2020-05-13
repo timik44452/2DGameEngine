@@ -1,5 +1,6 @@
-﻿using System.Runtime.InteropServices;
-
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Graphics.GDI;
 
 public class GDIGraphic : IGraphic
@@ -13,24 +14,21 @@ public class GDIGraphic : IGraphic
     private RendererQueue rendererQueue;
 
     private int[] frame;
-    private int[] depthBuffer;
+    private int[] depth;
+    private int[] clear;
+
 
     public void Draw()
     {
         GDIHelper.SetDIBitsToDevice(handle, 0, 0, width, height, 0, 0, 0, height, ref frame[0], ref info, 0);
 
-        for (int i = 0; i < frame.Length; i++)
-        {
-            depthBuffer[i] = int.MinValue;
-            frame[i] = 0;
-        }
+        clear.CopyTo(frame, 0);
+        clear.CopyTo(depth, 0);
     }
 
     public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
     {
-        rendererQueue.CheckVertexBuffer(gameObjects.Length * 6);
-
-        for (int i = 0; i < gameObjects.Length; i++)
+        Parallel.For(0, gameObjects.Length, i =>
         {
             GameObject gameObject = gameObjects[i];
             gameObject.Update();
@@ -60,31 +58,30 @@ public class GDIGraphic : IGraphic
                     {
                         if (x >= 0 && x < width && y >= 0 && y < height)
                         {
-                            int screen_idx = x + y * width;
+                            int screen_idx = (x + y * width);
                             int uv_idx =
                                 (int)((x - start_x) * uv_to_width) +
                                 (int)((y - start_y) * uv_to_height) * sprite.Height;
 
 
-                            if (depthBuffer[screen_idx] < gameObject.Layer)
+                            //if (depth[screen_idx] < gameObject.Layer)
                             {
                                 if (uv_idx < sprite.Buffer.Length)
                                 {
                                     frame[screen_idx] = sprite.Buffer[uv_idx];
-
-                                    depthBuffer[screen_idx] = gameObject.Layer;
+                                    depth[screen_idx] = gameObject.Layer;
                                 }
                             }
                         }
                     }
                 }
             }
-        }
+        });
     }
 
     public static GDIGraphic Create(int width, int height, HandleRef handle)
     {
-        float size_unit = height * 0.1F;
+        float size_unit = height * 0.08F;
 
         GDIGraphic graphic = new GDIGraphic();
 
@@ -94,7 +91,7 @@ public class GDIGraphic : IGraphic
         graphic.handle = handle;
 
         graphic.frame = new int[width * height];
-        graphic.depthBuffer = new int[width * height];
+        graphic.depth = new int[width * height];
 
         graphic.rendererQueue = new RendererQueue();
         graphic.viewMatrix = new Matrix3x3(
@@ -102,6 +99,8 @@ public class GDIGraphic : IGraphic
             0, size_unit, height / 2,
             0, 0, 1);
 
+        graphic.clear = new int[width * height];
+       
         return graphic;
     }
 
