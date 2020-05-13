@@ -6,7 +6,7 @@ public class GDIGraphic : IGraphic
 {
     private int width;
     private int height;
-    
+
     private HandleRef handle;
     private BITMAPINFO info;
     private Matrix3x3 viewMatrix;
@@ -14,17 +14,16 @@ public class GDIGraphic : IGraphic
 
     private int[] frame;
     private int[] depthBuffer;
-    private int[] depthBuffer_updateTrigger;
-    private int updateTrigger;
 
     public void Draw()
     {
         GDIHelper.SetDIBitsToDevice(handle, 0, 0, width, height, 0, 0, 0, height, ref frame[0], ref info, 0);
 
         for (int i = 0; i < frame.Length; i++)
+        {
+            depthBuffer[i] = int.MinValue;
             frame[i] = 0;
-
-        updateTrigger = (updateTrigger++) % 2;
+        }
     }
 
     public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
@@ -56,28 +55,29 @@ public class GDIGraphic : IGraphic
                 float uv_to_height = sprite.Height / GameMath.Abs(start_y - end_y);
 
                 for (int y = start_y; y < end_y; y++)
+                {
                     for (int x = start_x; x < end_x; x++)
                     {
                         if (x >= 0 && x < width && y >= 0 && y < height)
                         {
                             int screen_idx = x + y * width;
-                            int uv_idx = 
-                                (int)((x - start_x) * uv_to_width) + 
+                            int uv_idx =
+                                (int)((x - start_x) * uv_to_width) +
                                 (int)((y - start_y) * uv_to_height) * sprite.Height;
 
 
-                            if (depthBuffer[screen_idx] < gameObject.Layer || depthBuffer_updateTrigger[screen_idx] != updateTrigger)
+                            if (depthBuffer[screen_idx] < gameObject.Layer)
                             {
                                 if (uv_idx < sprite.Buffer.Length)
                                 {
                                     frame[screen_idx] = sprite.Buffer[uv_idx];
 
                                     depthBuffer[screen_idx] = gameObject.Layer;
-                                    depthBuffer_updateTrigger[screen_idx] = updateTrigger;
                                 }
                             }
                         }
                     }
+                }
             }
         }
     }
@@ -95,7 +95,6 @@ public class GDIGraphic : IGraphic
 
         graphic.frame = new int[width * height];
         graphic.depthBuffer = new int[width * height];
-        graphic.depthBuffer_updateTrigger = new int[width * height];
 
         graphic.rendererQueue = new RendererQueue();
         graphic.viewMatrix = new Matrix3x3(
@@ -108,6 +107,6 @@ public class GDIGraphic : IGraphic
 
     public void Release()
     {
-        
+
     }
 }
