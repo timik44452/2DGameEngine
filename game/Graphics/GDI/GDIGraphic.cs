@@ -20,6 +20,10 @@ public class GDIGraphic : IGraphic
     public void Draw()
     {
         GDIHelper.SetDIBitsToDevice(handle, 0, 0, width, height, 0, 0, 0, height, ref frame[0], ref info, 0);
+
+        for (int i = 0; i < frame.Length; i++)
+            frame[i] = 0;
+
         updateTrigger = (updateTrigger++) % 2;
     }
 
