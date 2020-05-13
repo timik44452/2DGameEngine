@@ -14,7 +14,7 @@ public class DirectXGraphic : IGraphic
     private int[] loaded_sprites;
 
     private RendererQueue rendererQueue;
-    private Matrix viewMatrix;
+    private Matrix2x2 viewMatrix;
 
     private DirectXGraphic(int width, int height)
     {
@@ -27,7 +27,7 @@ public class DirectXGraphic : IGraphic
         layersBuffer = new int[bufferSize];
         data = new int[bufferSize];
 
-        viewMatrix = new Matrix(
+        viewMatrix = new Matrix2x2(
             100F / width, 0,
             0, 100F / height);
 
@@ -83,8 +83,8 @@ public class DirectXGraphic : IGraphic
             Vector worldTransform = gameObject.transform.position - camera.gameObject.transform.position;
 
             rendererQueue.SetVertexBufferItem(i, gameObject.Layer, sprite,
-                Matrix.Multiply(viewMatrix, worldTransform - delta),
-                Matrix.Multiply(viewMatrix, worldTransform + delta));
+                Matrix2x2.Multiply(viewMatrix, worldTransform - delta),
+                Matrix2x2.Multiply(viewMatrix, worldTransform + delta));
 
             for (int l = 0; l < loaded_sprites.Length; l++)
                 if (loaded_sprites[l] == sprite.UID)

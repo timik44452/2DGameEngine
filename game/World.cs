@@ -24,25 +24,12 @@
 
         var renderer0 = new Renderer(Resourcepack.GetResource<Sprite>("grass"));
         var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
-
-        for (int x = -10; x < 10; x++)
-        {
-            for (int y = -10; y < 10; y++)
-            {
-                GameObject gameObject = new GameObject();
-
-                gameObject.Layer = 1;
-                gameObject.transform.position = new Vector(x, y);
-                gameObject.AddComponent(renderer0);
-
-                CreateGameObject(gameObject);
-            }
-        }
+        var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("wx"));
 
         GameObject _gameObject = new GameObject();
 
-        _gameObject.Layer = 0;
-        _gameObject.transform.position = new Vector(3, 4);
+        _gameObject.Layer = 1;
+        _gameObject.transform.position = new Vector(0, 0);
         _gameObject.AddComponent(renderer1);
 
         CreateGameObject(_gameObject);

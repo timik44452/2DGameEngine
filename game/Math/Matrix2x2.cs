@@ -1,4 +1,4 @@
-﻿public struct Matrix
+﻿public struct Matrix2x2
 {
     public float 
         m00, m10,
@@ -10,8 +10,9 @@
 
     public float column0, column1;
 
-    public Matrix(float m00, float m10,
-                  float m01, float m11)
+    public Matrix2x2(
+        float m00, float m10,
+        float m01, float m11)
     {
         this.m00 = m00;
         this.m01 = m01;
@@ -25,7 +26,7 @@
         column1 = m10 + m11;
     }
 
-    public static Vector Multiply(Matrix a, Vector b)
+    public static Vector Multiply(Matrix2x2 a, Vector b)
     {
         b.X = a.row0 * b.X;
         b.Y = a.row1 * b.Y;

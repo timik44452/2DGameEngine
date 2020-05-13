@@ -58,6 +58,7 @@
     <Compile Include="Components\Camera.cs" />
     <Compile Include="CIntegrations.cs" />
     <Compile Include="Graphics\GDI\GDIHelper.cs" />
+    <Compile Include="Math\Matrix3x3.cs" />
     <Compile Include="Objects\Color.cs" />
     <Compile Include="Graphics\GDI\GDIGraphic.cs" />
     <Compile Include="Graphics\GraphicCore.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="Graphics\DirectXGraphic.cs" />
     <Compile Include="Forms\IControlBehaviour.cs" />
     <Compile Include="Components\Light.cs" />
-    <Compile Include="Math\Matrix.cs" />
+    <Compile Include="Math\Matrix2x2.cs" />
     <Compile Include="Components\PhysicBody.cs" />
     <Compile Include="Objects\Rect.cs" />
     <Compile Include="Components\Renderer.cs" />
@@ -134,12 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\Resources\GraphicCore.dll">
-      <Link>GraphicCore.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

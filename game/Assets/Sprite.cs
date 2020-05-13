@@ -44,7 +44,7 @@ public class Sprite : Asset
 
         if (index >= 0 && index < colors.Length)
         {
-            Buffer[index] = color.GetBInt32() << 16 | color.GetGInt32() << 8 | color.GetRInt32();
+            Buffer[index] = color.GetRInt32() << 16 | color.GetGInt32() << 8 | color.GetBInt32();
 
             colors[index] = color;
         }

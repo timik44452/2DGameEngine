@@ -19,6 +19,7 @@ public static class GraphicCore
     private static IGraphic s_currentGraphic;
 
     public static void Initialize(int width ,int height, HandleRef handle)
+
     {
         s_currentGraphic = GDIGraphic.Create(width, height, handle);
     }
