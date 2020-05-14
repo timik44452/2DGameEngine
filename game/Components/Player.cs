@@ -3,7 +3,7 @@ public class Player : Component
 {
     public float Speed = 0.4F;
 
-    public override void FixedUpdate()
+    public override void Update()
     {
         float dx = 0;
         float dy = 0;
@@ -31,11 +31,10 @@ public class Player : Component
 
     public void Move(float deltaX, float deltaY)
     {
-
-        if (deltaX != 0)
-        {
-            gameObject.transform.scale = new Vector(deltaX, 1);
-        }
+        //if (deltaX != 0)
+        //{
+        //    gameObject.transform.scale = new Vector(deltaX, 1);
+        //}
 
         if (deltaY != 0 || deltaX != 0)
             gameObject.GetComponent<Animation>()?.Steep();

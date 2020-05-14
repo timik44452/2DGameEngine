@@ -32,7 +32,8 @@ namespace WindowsFormsApp5
             Service.Tiling.LoadTilesFromMap("tilemap",
                new TilemapCell("grass", 640, 0, 32, 32),
                new TilemapCell("tree", 384, 448, 64, 64),
-               new TilemapCell("wx", 0, 0, 32, 32));
+               new TilemapCell("wall", 384, 320, 32, 32),
+               new TilemapCell("floor", 0, 640, 32, 32));
 
             map = new World();
             inputContext = new InputContext();
@@ -46,6 +47,9 @@ namespace WindowsFormsApp5
         public void OnPaint(object sender)
         {
             DateTime time = DateTime.Now;
+
+            foreach (GameObject gameObject in map.GetAllObjects())
+                gameObject.Update();
 
             if (map.GetCameraObject() != null)
                 map.GetCameraObject().camera.Renderer();

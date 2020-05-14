@@ -32,10 +32,10 @@ public class GDIGraphic : IGraphic
         viewMatrix.m20 = width * 0.5F - camera.gameObject.transform.position.X;
         viewMatrix.m21 = height * 0.5F + camera.gameObject.transform.position.Y;
      
-        Parallel.For(0, gameObjects.Length, i =>
+        //Parallel.For(0, gameObjects.Length, i =>
+        for(int i = 0; i < gameObjects.Length; i++)
         {
             GameObject gameObject = gameObjects[i];
-            gameObject.Update();
 
             Sprite sprite = gameObject.renderer.sprite;
 
@@ -79,7 +79,7 @@ public class GDIGraphic : IGraphic
                     }
                 }
             }
-        });
+        }//);
 
         for (int index = 0; index < Gizmos.currentPrimitive; index++)
             Gizmos.primitives[index].Draw(viewMatrix, width, height, ref frame);

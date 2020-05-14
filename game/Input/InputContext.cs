@@ -35,7 +35,7 @@ public class InputContext
                 return item.state;
         }
 
-        throw new Exception($"Key {name} hasn't find");
+        return KeyState.None;
     }
 
     public void Update()

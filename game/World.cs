@@ -1,4 +1,6 @@
-﻿public class World
+﻿using System;
+
+public class World
 {
     private GameObject camera;
     private GameObject[] allObjects;
@@ -22,22 +24,58 @@
         cameraObject.AddComponent(new Camera());
         cameraObject.GetComponent<Camera>().viewport = new Rect(-20, -12, 40, 24);
 
-        var renderer0 = new Renderer(Resourcepack.GetResource<Sprite>("grass"));
-        var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
-        var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("wx"));
+        var renderer0 = new Renderer(Resourcepack.GetResource<Sprite>("floor"));
+        var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("wall"));
+        var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
 
-        for (int y = -10; y < 10; y++)
-            for (int x = -10; x < 10; x++)
+        int[] room = new int[]
             {
-                GameObject _gameObject = new GameObject();
+                1, 1, 1, 1, 0, 1, 1, 1, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 0, 0, 0, 1,
+                1, 1, 1, 1, 0, 1, 1, 1, 1
+            };
 
-                _gameObject.Layer = 1;
-                _gameObject.transform.position = new Vector(x, y);
-                _gameObject.AddComponent(renderer1);
+        int size = (int)Math.Sqrt(room.Length);
 
-                CreateGameObject(_gameObject);
+        for (int idx = 0; idx < room.Length; idx++)
+        {
+            int x = idx % size;
+            int y = idx / size;
+
+            GameObject gameObject = new GameObject();
+
+            gameObject.Layer = 1;
+            gameObject.transform.position = new Vector(x - size * 0.5F, y - size * 0.5F);
+
+            if(room[idx] == 1)
+            {
+                gameObject.AddComponent(renderer1);
+            }
+            else
+            {
+                gameObject.AddComponent(renderer0);
             }
 
+            CreateGameObject(gameObject);
+        }
+
+        GameObject player = new GameObject();
+
+        player.Layer = 2;
+
+        player.AddComponent(new PhysicBody());
+        player.AddComponent(new Player());
+        player.AddComponent(renderer2);
+
+        player.GetComponent<Player>().Speed = 0.1F;
+
+        CreateGameObject(player);
         CreateGameObject(cameraObject);
     }
 

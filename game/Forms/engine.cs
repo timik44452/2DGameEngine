@@ -5,7 +5,7 @@ namespace WindowsFormsApp5
 {
     public partial class engine : Form
     {
-        private const bool IsFullWindow = true;
+        private const bool IsFullWindow = false;
         
         private IControlBehaviour control;
 
