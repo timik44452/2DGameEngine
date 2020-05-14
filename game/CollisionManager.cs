@@ -56,7 +56,7 @@ public static class CollisionManager
             {
                 foreach (Edge edge in obstacleCollider.Edges)   //все грани препятствия
                 {
-                    if (-(edge.Normal.X * velocity.X) - (edge.Normal.Y * velocity.Y) > 0) //ДОБАВИТЬ которые противоположны граням выше
+                    if (edge.Normal.X * velocity.X + edge.Normal.Y * -velocity.Y < 0) //ДОБАВИТЬ которые противоположны граням выше
                     {
                         if (FindCrossing(Points[i], new Vector(Points[i].X + velocity.X, Points[i].Y + velocity.Y), edge.Start + ObstacleCenter, edge.End + ObstacleCenter, out double crossingX, out double crossingY))
                         {
@@ -137,7 +137,7 @@ public static class CollisionManager
             {
                 foreach (Edge edge in mainCollider.Edges)   //все грани объекта
                 {
-                    if (edge.Normal.X * velocity.X + edge.Normal.Y * velocity.Y > 0) //ДОБАВИТЬ которые противоположны граням выше
+                    if (edge.Normal.X * velocity.X + edge.Normal.Y * -velocity.Y < 0) //ДОБАВИТЬ которые противоположны граням выше
                     {
                         if (FindCrossing(ObstaclePoints[i], new Vector(ObstaclePoints[i].X - velocity.X, ObstaclePoints[i].Y - velocity.Y), edge.Start + MainCenter, edge.End + MainCenter, out double crossingX, out double crossingY))
                         {
@@ -206,18 +206,17 @@ public static class CollisionManager
     {
         double mult1;
         double mult2;
+        crossX = 0;
+        crossY = 0;
 
         mult1 = (pointEnd.X - pointStart.X) * (obs1.Y - pointStart.Y) - (pointEnd.Y - pointStart.Y) * (obs1.X - pointStart.X);
-        mult2 = (pointEnd.X - pointStart.X) * (obs2.Y - pointStart.Y) - (pointEnd.Y - pointStart.Y) * (obs2.X - pointStart.X);
 
         if (mult1 == 0)
         {
             if (pointStart.X == obs1.X)
             {
-                if (Math.Abs(obs1.Y - pointStart.Y) > 0)
+                if (Math.Abs(obs1.Y - pointStart.Y) > Math.Abs(pointEnd.Y - pointStart.Y))
                 {
-                    crossX = pointEnd.X;
-                    crossY = pointEnd.Y;
                     return false;
                 }
                 else
@@ -229,10 +228,8 @@ public static class CollisionManager
             }
             else if (pointStart.Y == obs1.Y)
             {
-                if (Math.Abs(obs1.X - pointStart.X) > 0)
+                if (Math.Abs(obs1.X - pointStart.X) > Math.Abs(pointEnd.X - pointStart.X))
                 {
-                    crossX = pointEnd.X;
-                    crossY = pointEnd.Y;
                     return false;
                 }
                 else
@@ -243,14 +240,16 @@ public static class CollisionManager
                 }
             }
         }
-        else if (mult2 == 0)
+
+        mult2 = (pointEnd.X - pointStart.X) * (obs2.Y - pointStart.Y) - (pointEnd.Y - pointStart.Y) * (obs2.X - pointStart.X);
+
+        if (mult2 == 0)
         {
             if (pointStart.X == obs2.X)
             {
-                if (Math.Abs(obs2.Y - pointStart.Y) > 0)
+                if (Math.Abs(obs2.Y - pointStart.Y) > Math.Abs(pointEnd.Y - pointStart.Y))
                 {
-                    crossX = pointEnd.X;
-                    crossY = pointEnd.Y;
+                    return false;
                 }
                 else
                 {
@@ -261,10 +260,9 @@ public static class CollisionManager
             }
             else if (pointStart.Y == obs2.Y)
             {
-                if (Math.Abs(obs2.X - pointStart.X) > 0)
+                if (Math.Abs(obs2.X - pointStart.X) > Math.Abs(pointEnd.X - pointStart.X))
                 {
-                    crossX = pointEnd.X;
-                    crossY = pointEnd.Y;
+                    return false;
                 }
                 else
                 {
@@ -284,14 +282,67 @@ public static class CollisionManager
             obs2 = temp;
 
             mult1 = (pointEnd.X - pointStart.X) * (obs1.Y - pointStart.Y) - (pointEnd.Y - pointStart.Y) * (obs1.X - pointStart.X);
+
+            if (mult1 == 0)
+            {
+                if (pointStart.X == obs1.X)
+                {
+                    if (Math.Abs(obs1.Y - pointStart.Y) > Math.Abs(pointEnd.Y - pointStart.Y))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        crossX = obs1.X;
+                        crossY = obs1.Y;
+                        return true;
+                    }
+                }
+                else if (pointStart.Y == obs1.Y)
+                {
+                    if (Math.Abs(obs1.X - pointStart.X) > Math.Abs(pointEnd.X - pointStart.X))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        crossX = obs1.X;
+                        crossY = obs1.Y;
+                        return true;
+                    }
+                }
+            }
+
             mult2 = (pointEnd.X - pointStart.X) * (obs2.Y - pointStart.Y) - (pointEnd.Y - pointStart.Y) * (obs2.X - pointStart.X);
 
-
-            if (mult1 == 0 || mult2 == 0)
+            if (mult2 == 0)
             {
-                crossX = obs1.X;
-                crossY = obs1.Y;
-                return true;
+                if (pointStart.X == obs2.X)
+                {
+                    if (Math.Abs(obs2.Y - pointStart.Y) > Math.Abs(pointEnd.Y - pointStart.Y))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        crossX = obs1.X;
+                        crossY = obs1.Y;
+                        return true;
+                    }
+                }
+                else if (pointStart.Y == obs2.Y)
+                {
+                    if (Math.Abs(obs2.X - pointStart.X) > Math.Abs(pointEnd.X - pointStart.X))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        crossX = obs1.X;
+                        crossY = obs1.Y;
+                        return true;
+                    }
+                }
             }
 
             if (mult1 * mult2 < 0)
