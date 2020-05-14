@@ -71,7 +71,7 @@ public class Texture : Asset
                 {
                     var color = bitmap.GetPixel(x, y);
 
-                    colors[x + y * Width] = new Color(color.R, color.G, color.B, color.A);
+                    colors[x + y * Width] = new Color(color.R / 255F, color.G / 255F, color.B / 255F, color.A / 255F);
                 }
         }
     }

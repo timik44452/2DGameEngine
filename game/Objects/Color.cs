@@ -54,18 +54,6 @@
         BInt32 = (int)(b * 255);
     }
 
-    public Color(byte R, byte G, byte B, byte A)
-    {
-        r = R / 255F;
-        g = G / 255F;
-        b = B / 255F;
-        a = A / 255F;
-
-        RInt32 = (int)(r * 255);
-        GInt32 = (int)(g * 255);
-        BInt32 = (int)(b * 255);
-    }
-
     public Color(float R, float G, float B)
     {
         r = R;
@@ -90,19 +78,13 @@
         BInt32 = (int)(b * 255);
     }
 
-    public int GetRGB(int R, int G, int B)
+    public int ToInt()
     {
-        int r = R << 16;
-        int g = G << 8;
-        int b = B;
-
-        int result = 0;
-
-        result |= b;
-        result |= g;
-        result |= r;
-
-        return result;
+        return
+            255 << 24 |
+            RInt32 << 16 |
+            GInt32 << 8 |
+            BInt32;
     }
 
     public int GetRInt32()

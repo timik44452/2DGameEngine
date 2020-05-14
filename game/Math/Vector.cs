@@ -71,7 +71,7 @@ public struct Vector
 
     private void Recalculate()
     {
-        //length = (float)Math.Sqrt(x * x + y * y);
+        length = (float)Math.Sqrt(x * x + y * y);
     }
 
     public static Vector Lerp(Vector from, Vector to, float t)

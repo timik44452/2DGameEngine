@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Graphics.GDI;
+using Graphics.Gizmos;
 
 public class GDIGraphic : IGraphic
 {
@@ -28,6 +29,9 @@ public class GDIGraphic : IGraphic
 
     public void DrawGameObjects(Camera camera, GameObject[] gameObjects)
     {
+        viewMatrix.m20 = width * 0.5F - camera.gameObject.transform.position.X;
+        viewMatrix.m21 = height * 0.5F + camera.gameObject.transform.position.Y;
+     
         Parallel.For(0, gameObjects.Length, i =>
         {
             GameObject gameObject = gameObjects[i];
@@ -38,10 +42,9 @@ public class GDIGraphic : IGraphic
             if (sprite != null && camera.viewport.Contain(gameObject.transform.position))
             {
                 Vector delta = gameObject.transform.scale * 0.5f;
-                Vector worldTransform = gameObject.transform.position - camera.gameObject.transform.position;
 
-                Vector from = Matrix3x3.Multiply(viewMatrix, worldTransform - delta);
-                Vector to = Matrix3x3.Multiply(viewMatrix, worldTransform + delta);
+                Vector from = Matrix3x3.Multiply(viewMatrix, gameObject.transform.position - delta);
+                Vector to = Matrix3x3.Multiply(viewMatrix, gameObject.transform.position + delta);
 
                 int start_x = (int)from.X;
                 int start_y = (int)from.Y;
@@ -77,6 +80,11 @@ public class GDIGraphic : IGraphic
                 }
             }
         });
+
+        for (int index = 0; index < Gizmos.currentPrimitive; index++)
+            Gizmos.primitives[index].Draw(viewMatrix, width, height, ref frame);
+
+        Gizmos.currentPrimitive = 0;
     }
 
     public static GDIGraphic Create(int width, int height, HandleRef handle)
@@ -107,5 +115,4 @@ public class GDIGraphic : IGraphic
     public void Release()
     {
 
-    }
-}
+    }}
