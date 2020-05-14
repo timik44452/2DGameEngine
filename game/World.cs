@@ -7,6 +7,7 @@ public class World
     private GameObject[] drawbleObjects;
     private GameObject[] physicActiveObjects;
     private GameObject[] lightObjects;
+    private GameObject[] collidingObjects;
 
     public World()
     {
@@ -14,6 +15,7 @@ public class World
         drawbleObjects = new GameObject[0];
         physicActiveObjects = new GameObject[0];
         lightObjects = new GameObject[0];
+        collidingObjects = new GameObject[0];
 
         Fill();
     }
@@ -90,6 +92,9 @@ public class World
         if (gameObject.light != null)
             Remove(ref lightObjects, gameObject);
 
+        if (gameObject.collider != null)
+            Remove(ref collidingObjects, gameObject);
+
         Remove(ref allObjects, gameObject);
     }
 
@@ -109,6 +114,9 @@ public class World
 
         if (gameObject.light != null)
             Add(ref lightObjects, gameObject);
+
+        if (gameObject.collider != null)
+            Add(ref collidingObjects, gameObject);
 
         Add(ref allObjects, gameObject);
 
@@ -157,6 +165,11 @@ public class World
     public GameObject[] GetLightObjects()
     {
         return lightObjects;
+    }
+
+    public GameObject[] GetCollidingObjects()
+    {
+        return collidingObjects;
     }
 
     public GameObject[] GetAllObjects()

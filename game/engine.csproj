@@ -52,12 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollisionManager.cs" />
     <Compile Include="Components\Animation.cs" />
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Audio\Audio.cs" />
     <Compile Include="Audio\AudioClip.cs" />
+    <Compile Include="Components\BoxCollider.cs" />
     <Compile Include="Components\Camera.cs" />
     <Compile Include="CIntegrations.cs" />
+    <Compile Include="Components\Collider.cs" />
+    <Compile Include="Edge.cs" />
     <Compile Include="Graphics\GDI\GDIHelper.cs" />
     <Compile Include="Graphics\Gizmos\Gizmos.cs" />
     <Compile Include="Graphics\Gizmos\Line.cs" />

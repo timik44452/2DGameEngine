@@ -1,5 +1,5 @@
 ﻿
-public class Component
+public abstract class Component
 {
     public GameObject gameObject { get; set; }
 
