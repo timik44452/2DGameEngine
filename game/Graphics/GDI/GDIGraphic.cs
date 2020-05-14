@@ -64,7 +64,7 @@ public class GDIGraphic : IGraphic
                                 (int)((y - start_y) * uv_to_height) * sprite.Height;
 
 
-                            //if (depth[screen_idx] < gameObject.Layer)
+                            if (depth[screen_idx] < gameObject.Layer)
                             {
                                 if (uv_idx < sprite.Buffer.Length)
                                 {
