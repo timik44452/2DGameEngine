@@ -28,20 +28,39 @@
         var renderer1 = new Renderer(Resourcepack.GetResource<Sprite>("tree"));
         var renderer2 = new Renderer(Resourcepack.GetResource<Sprite>("wx"));
 
-        var physicBody = new PhysicBody();
-        physicBody.velocity = Vector.right * 0.02f;
-        physicBody.Damping = 1;
+        //var physicBody = new PhysicBody
+        //{
+        //    velocity = Vector.right * 0.02f,
+        //    Damping = 1
+        //};
 
-        GameObject _gameObject = new GameObject();
+        //GameObject _gameObject = new GameObject();
 
-        _gameObject.Layer = 1;
-        _gameObject.transform.position = new Vector(0, 0);
-        _gameObject.AddComponent(renderer1);
-        _gameObject.AddComponent(physicBody);
+        //_gameObject.Layer = 1;
+        //_gameObject.transform.position = new Vector(0, 0);
+        //_gameObject.AddComponent(renderer1);
+        ////_gameObject.AddComponent(physicBody);
 
-        CreateGameObject(_gameObject);
+        //CreateGameObject(_gameObject);
 
         CreateGameObject(cameraObject);
+
+        GameObject[] randomObjects = new GameObject[10];
+        for (int i = 0; i < 2; i++)
+        {
+            randomObjects[i] = new GameObject();
+            randomObjects[i].Layer = 1;
+            randomObjects[i].AddComponent(renderer1);
+            randomObjects[i].AddComponent(new BoxCollider(new Vector(-0.5, -0.5), new Vector(0.5, -0.5), new Vector(0.5, 0.5), new Vector(-0.5, 0.5)));
+            randomObjects[i].AddComponent(new PhysicBody { Damping = 1, velocity = Vector.up * 0.02f });
+
+            CreateGameObject(randomObjects[i]);
+        }
+        randomObjects[0].transform.position = new Vector(0.5, -1.5);
+        randomObjects[1].transform.position = new Vector(0, 1);
+        randomObjects[1].physic.velocity = Vector.zero;
+        //randomObjects[2].transform.position = new Vector(1, 1);
+        //randomObjects[3].transform.position = new Vector(-1, 1);
     }
 
     public void Destroy(GameObject gameObject)

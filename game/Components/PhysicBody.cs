@@ -1,4 +1,6 @@
-﻿public class PhysicBody : Component
+﻿using System;
+
+public class PhysicBody : Component
 {
     public bool IsStatic = false;
 
@@ -26,12 +28,31 @@
 
     public override void Update()
     {
-        if (!IsStatic)
-        {
-            //velocity -= Vector.up * 0.098F;
-            gameObject.transform.position += velocity;
+        //if (!IsStatic)
+        //{
+        //    //velocity -= Vector.up * 0.098F;
+        //    gameObject.transform.position += velocity;
 
-            velocity = velocity * damping;
+        //    velocity = velocity * damping;
+        //}
+
+        if (IsStatic)
+            return;
+
+        if (velocity.X == 0 && velocity.Y == 0)
+            return;
+
+        Vector maxDistance = CollisionManager.GetMaxDistance(gameObject, velocity, out bool HasCollided);
+
+        gameObject.transform.position += maxDistance;
+
+        if (HasCollided)
+        {
+            velocity = Vector.zero;
+        }
+        else
+        {
+            velocity *= damping;
         }
     }
 }
