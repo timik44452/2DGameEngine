@@ -10,7 +10,7 @@ namespace WindowsFormsApp5
         private const int fixed_fps = 60;
 
         private World map;
-        private Input input;
+        private InputContext inputContext;
         
 
         public RendererBox()
@@ -25,18 +25,21 @@ namespace WindowsFormsApp5
 
         public void OnLoad(object sender)
         {
+            InputHandlerInitialize(); 
+            
             Resourcepack.Loadresources();
-
+            
             Service.Tiling.LoadTilesFromMap("tilemap",
                new TilemapCell("grass", 640, 0, 32, 32),
                new TilemapCell("tree", 384, 448, 64, 64),
                new TilemapCell("wx", 0, 0, 32, 32));
 
             map = new World();
-            input = new Input();
+            inputContext = new InputContext();
 
             var graphics = CreateGraphics();
 
+            Input.Initialize(inputContext);
             GraphicCore.Initialize(Width, Height, new System.Runtime.InteropServices.HandleRef(graphics, graphics.GetHdc()));
         }
 
@@ -50,6 +53,19 @@ namespace WindowsFormsApp5
             GraphicCore.currentGraphic.Draw();
 
             deltaTime = (float)(DateTime.Now - time).TotalMilliseconds;
+            inputContext.Update();
+        }
+
+        private void InputHandlerInitialize()
+        {
+            MouseMove += (object sender, MouseEventArgs e) =>
+            {
+                inputContext.mousePosition.X = e.X;
+                inputContext.mousePosition.Y = e.Y;
+            };
+
+            KeyDown += (object sender, KeyEventArgs e) => inputContext.KeyDown(e.KeyCode.ToString());
+            KeyUp += (object sender, KeyEventArgs e) => inputContext.KeyUp(e.KeyCode.ToString());
         }
     }
 }
