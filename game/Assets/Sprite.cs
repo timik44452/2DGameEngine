@@ -1,57 +1,53 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
-public class Sprite : Asset
+public unsafe class Sprite : Asset, IDisposable
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    private Color[] colors;
-
-    public int[] Buffer;
-
-    public Sprite(int Width, int Height)
-    {
-        this.Width = Width;
-        this.Height = Height;
-
-        colors = new Color[Width * Height];
-        Buffer = new int[Width * Height];
-    }
+    private IntPtr ptr;
+    private IntPtr tempPtr;
 
     public Sprite(Texture texture)
     {
         Width = texture.Width;
         Height = texture.Height;
 
-        colors = new Color[Width * Height];
-        Buffer = new int[Width * Height];
+        int Length = Width * Height;
+        int size = Marshal.SizeOf(typeof(Color));
+        tempPtr = Marshal.AllocHGlobal(Length * size);
+        ptr = Marshal.AllocHGlobal(Length * size);
 
         for (int x = 0; x < Width; x++)
+        {
             for (int y = 0; y < Height; y++)
             {
-                SetColor(x , y, texture.GetColor(x / (float)Width, y / (float)Height));  
+                SetColor(x, y, texture.GetColor(x / (float)Width, y / (float)Height));
             }
-    }
-
-    public void Apply()
-    {
-        GameDebug.DXLog(CIntegrations.CreateDXResource(this));
-    }
-
-    public void SetColor(int x, int y, Color color)
-    {
-        int index = x + y * Width;
-
-        if (index >= 0 && index < colors.Length)
-        {
-            Buffer[index] = color.ToInt();
-
-            colors[index] = color;
         }
     }
 
-    public void Save(string path)
+    public IntPtr GetIntPtr()
     {
-        Service.ImageProcessor.Save(path, Buffer, Width, Height);
+        return ptr;
+    }
+
+    public void Dispose()
+    {
+        Marshal.Release(tempPtr);
+        Marshal.Release(ptr);
+    }
+
+    private void SetColor(int x, int y, Color color)
+    {
+        int index = x + y * Width;
+        
+        if (index >= 0 && index < Width * Height)
+        {
+            Marshal.StructureToPtr(color, tempPtr, true);
+
+            Marshal.WriteIntPtr(ptr, index * Marshal.SizeOf(color), tempPtr);
+        }
     }
 }

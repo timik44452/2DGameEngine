@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Service;
+using System;
 
 public class World
 {
-    private GameObject camera;
+    public int CameraCount { get => cameras.Length; }
+
+    private GameObject[] cameras;
     private GameObject[] allObjects;
     private GameObject[] drawbleObjects;
     private GameObject[] physicActiveObjects;
@@ -11,6 +14,7 @@ public class World
 
     public World()
     {
+        cameras = new GameObject[0];
         allObjects = new GameObject[0];
         drawbleObjects = new GameObject[0];
         physicActiveObjects = new GameObject[0];
@@ -23,6 +27,7 @@ public class World
     private void Fill()
     {
         GameObject cameraObject = new GameObject();
+
         cameraObject.AddComponent(new Camera());
         cameraObject.GetComponent<Camera>().viewport = new Rect(-20, -12, 40, 24);
 
@@ -67,6 +72,26 @@ public class World
             CreateGameObject(gameObject);
         }
 
+        GameObject menu = new GameObject();
+
+        Texture texture = new Texture(16, 16);
+        ImageProcessor.Fill(texture, ColorAtlas.Gray);
+        Sprite sprite = new Sprite(texture);
+
+        Renderer menuRenderer = new Renderer(sprite);
+
+        menu.Layer = 2;
+        menu.AddComponent(menuRenderer);
+
+        CreateGameObject(menu);
+
+        Vector scale = new Vector(0.225F, 1);
+        Vector position = new Vector((scale.X - 1) * 0.5F, 0);
+
+        menu.transform.space = Space.Screen;
+        menu.transform.scale = scale;
+        menu.transform.position = position;
+
         GameObject player = new GameObject();
 
         player.Layer = 2;
@@ -104,7 +129,7 @@ public class World
         gameObject.Id = allObjects.Length;
 
         if (gameObject.camera != null)
-            camera = gameObject;
+            Add(ref cameras, gameObject);
 
         if (gameObject.renderer != null)
             Add(ref drawbleObjects, gameObject);
@@ -147,9 +172,9 @@ public class World
         array[buffer.Length] = gameObject;
     }
 
-    public GameObject GetCameraObject()
+    public GameObject[] GetCameraObjects()
     {
-        return camera;
+        return cameras;
     }
 
     public GameObject[] GetPhysicObjects()
@@ -157,7 +182,7 @@ public class World
         return physicActiveObjects;
     }
 
-    public GameObject[] GetViewedObjects()
+    public GameObject[] GetDrawbleObjects()
     {
         return drawbleObjects;
     }

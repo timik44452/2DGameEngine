@@ -1,6 +1,9 @@
-﻿
+﻿using System.Collections.Generic;
+
 public class GameObject
 {
+    public static GameObject underMouse { get; set; }
+
     public int Id;
 
     public int Layer { get; set; }
@@ -17,7 +20,6 @@ public class GameObject
 
 
     private Component[] components = new Component[0];
-
 
     public GameObject()
     {
@@ -68,13 +70,20 @@ public class GameObject
         components[buffer.Length] = component;
     }
 
-    public T GetComponent<T>()
+    public T GetComponent<T>() where T : Component
     {
         for (int i = 0; i < components.Length; i++)
-            if (components[i].GetType().Equals(typeof(T)))
-                return (T)(object)components[i];
+            if (components[i] is T)
+                return (T)components[i];
 
         return default;
+    }
+
+    public IEnumerable<T> GetComponents<T>() where T : Component
+    {
+        for (int i = 0; i < components.Length; i++)
+            if (components[i] is T)
+                yield return (T)components[i];
     }
 
     private void AddTransform()
@@ -84,16 +93,25 @@ public class GameObject
 
     public void OnCollision(Vector point)
     {
+        if (!RuntimeUtilities.RunningComponentSystem)
+            return;
+
         for (int i = 0; i < components.Length; i++)
             components[i].OnCollision(point);
     }
     public void Update()
     {
+        if (!RuntimeUtilities.RunningComponentSystem)
+            return;
+
         for (int i = 0; i < components.Length; i++)
-            components[i].Update();
+            components[i].OnRenderer();
     }
     public void FixedUpdate()
     {
+        if (!RuntimeUtilities.RunningComponentSystem)
+            return;
+
         for (int i = 0; i < components.Length; i++)
             components[i].FixedUpdate();
     }

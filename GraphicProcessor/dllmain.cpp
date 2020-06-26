@@ -18,6 +18,13 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     return TRUE;
 }
 
+struct Color
+{
+public:
+    float r, g, b, a;
+    int RInt32, GInt32, BInt32;
+};
+
 int* frame;
 int* depth;
 
@@ -33,7 +40,7 @@ extern "C" __declspec (dllexport) void _stdcall init(int* _frame, int* _depth, i
     height = _height;
 }
 
-extern "C" __declspec (dllexport) void _stdcall draw(float x, float y, float w, float h, int* sprite, int sw, int sh)
+extern "C" __declspec (dllexport) void _stdcall draw(float x, float y, float w, float h, Color* sprite, int sw, int sh)
 {
     int start_x = (int)(x - w * 0.5F);
     int start_y = (int)(y - h * 0.5F);
@@ -58,12 +65,12 @@ extern "C" __declspec (dllexport) void _stdcall draw(float x, float y, float w, 
                     (int)((y - start_y) * uv_to_height) * sh;
 
 
-                //if (depth[screen_idx] < gameObject.Layer)
+                if (uv_idx < sl)
                 {
-                    if (uv_idx < sl)
-                    {
-                        frame[screen_idx] = sprite[uv_idx];
-                    }
+                    //float alpha0 = frame[screen_idx]
+                    Color color = sprite[uv_idx];
+
+                    frame[screen_idx] = color.RInt32;
                 }
             }
         }

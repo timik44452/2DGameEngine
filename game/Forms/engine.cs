@@ -1,46 +1,58 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace WindowsFormsApp5
+
+public partial class engine : Form
 {
-    public partial class engine : Form
+    private const bool IsFullWindow = false;
+
+    private IControlBehaviour control;
+
+    public engine()
     {
-        private const bool IsFullWindow = false;
+        InitializeComponent();
         
-        private IControlBehaviour control;
-
-        public engine()
+        if (IsFullWindow)
         {
-            InitializeComponent();
-
-            if (IsFullWindow)
-            {
-                FormBorderStyle = FormBorderStyle.None;
-                WindowState = FormWindowState.Maximized;
-            }
-
-            control = rendererBox;
-
-            Timer timer = new Timer();
-            timer.Tick += (s, e) => OnPaintScene(s);
-            timer.Interval = 1;
-            timer.Start();
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
         }
 
-        private void OnPaintScene(object sender)
-        {
-            control?.OnPaint(sender);
-            Text = $"FPS:{1000F / GameMath.Max(control.deltaTime, 1)}";
-        }
+        control = rendererBox;
 
-        private void OnClose(object sender, FormClosingEventArgs e)
+        Timer timer = new Timer();
+        timer.Tick += (s, e) => OnPaintScene(s);
+        timer.Interval = 1;
+        timer.Start();
+    }
+
+    private void OnPaintScene(object sender)
+    {
+        control?.OnPaint(sender);
+        Text = $"FPS:{1000F / GameMath.Max(control.deltaTime, 1)}";
+    }
+
+    private void OnClose(object sender, FormClosingEventArgs eventArgs)
+    {
+        try
         {
             control?.OnClosed(sender);
         }
+        catch(Exception e)
+        {
+            MessageBox.Show("Closing error", e.Message, MessageBoxButtons.OK);
+        }
+    }
 
-        private void OnLoad(object sender, EventArgs e)
+    private void OnLoad(object sender, EventArgs eventArgs)
+    {
+        try
         {
             control?.OnLoad(sender);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show("Loading error", e.Message, MessageBoxButtons.OK);
         }
     }
 }

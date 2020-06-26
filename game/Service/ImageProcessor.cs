@@ -21,6 +21,20 @@ namespace Service
             }
         }
 
+        public static void Fill(Texture source, Color color)
+        {
+            Fill(source, 0, 0, source.Width, source.Height, color);
+        }
+
+        public static void Fill(Texture source, int x, int y, int width, int height, Color color)
+        {
+            for (int positionX = x; positionX < x + width; positionX++)
+                for (int positionY = y; positionY < y + height; positionY++)
+                {
+                    source.SetPixel(positionX, positionY, color);
+                }
+        }
+
         public static void Copy(Texture source, Texture destination, int x_offset = 0, int y_offset = 0)
         {            
             for (int y = 0; y < destination.Height; y++)

@@ -1,10 +1,20 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 public class Texture : Asset
 {
-    public int Width { get; private set; }
-    public int Height { get; private set; }
+    public int Width 
+    { 
+        get; 
+        private set; 
+    }
+
+    public int Height 
+    { 
+        get; 
+        private set; 
+    }
 
     private Color[] colors;
 
@@ -31,6 +41,12 @@ public class Texture : Asset
             return ColorAtlas.Transparent;
     }
 
+    public void SetPixel(int index, Color color)
+    {
+        if (index >= 0 && index < colors.Length)
+            colors[index] = color;
+    }
+
     public void SetPixel(int x, int y, Color color)
     {
         int index = x + y * Width;
@@ -54,6 +70,21 @@ public class Texture : Asset
         int y = (int)(v * Height);
 
         return GetPixel(x, y);
+    }
+
+    public static Texture FromSprite(Sprite sprite)
+    {
+        Texture texture = new Texture(sprite.Width, sprite.Height);
+
+        for (int i = 0; i < texture.Width * texture.Height; i++)
+        {
+            IntPtr ptr = Marshal.ReadIntPtr(sprite.GetIntPtr(), i * Marshal.SizeOf<Color>());
+            Color color = (Color)Marshal.PtrToStructure(ptr, typeof(Color));
+
+            texture.SetPixel(i, color);
+        }
+
+        return texture;
     }
 
     public void Load(string fileName)

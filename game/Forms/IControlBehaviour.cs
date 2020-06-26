@@ -1,11 +1,8 @@
-﻿namespace WindowsFormsApp5
+﻿public interface IControlBehaviour
 {
-    public interface IControlBehaviour
-    {
-        float deltaTime { get; }
+    float deltaTime { get; }
 
-        void OnLoad(object sender);
-        void OnClosed(object sender);
-        void OnPaint(object sender);
-    }
+    void OnLoad(object sender);
+    void OnClosed(object sender);
+    void OnPaint(object sender);
 }

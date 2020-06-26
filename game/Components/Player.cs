@@ -1,9 +1,18 @@
 ﻿
 public class Player : Component
 {
-    public float Speed = 0.4F;
+    public float Speed
+    {
+        get => GetPropertyValue<float>(nameof(Speed));
+        set => SetPropertyValue(nameof(Speed), value);
+    }
 
-    public override void Update()
+    public override void OnCreated()
+    {
+        CreateProperty(nameof(Speed), 0.1F);
+    }
+
+    public override void OnRenderer()
     {
         float dx = 0;
         float dy = 0;

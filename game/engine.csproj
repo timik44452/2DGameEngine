@@ -59,8 +59,9 @@
     <Compile Include="Audio\AudioClip.cs" />
     <Compile Include="Components\BoxCollider.cs" />
     <Compile Include="Components\Camera.cs" />
-    <Compile Include="CIntegrations.cs" />
     <Compile Include="Components\Collider.cs" />
+    <Compile Include="Components\Method.cs" />
+    <Compile Include="Components\Property.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Graphics\GDI\GDIHelper.cs" />
     <Compile Include="Graphics\Gizmos\Gizmos.cs" />
@@ -70,8 +71,9 @@
     <Compile Include="Math\Matrix3x3.cs" />
     <Compile Include="Objects\Color.cs" />
     <Compile Include="Graphics\GDI\GDIGraphic.cs" />
-    <Compile Include="Graphics\GraphicCore.cs" />
+    <Compile Include="Graphics\GraphicsAPI.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
+    <Compile Include="RuntimeUtilities.cs" />
     <Compile Include="Service\ColorAtlas.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Service\GameDebug.cs" />

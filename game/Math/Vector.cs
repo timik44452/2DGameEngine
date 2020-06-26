@@ -1,16 +1,28 @@
 ﻿using System;
 
-
+//TODO: Optimize
 public struct Vector
 {
     private float x;
     private float y;
     private float length;
 
-    public static Vector right { get => new Vector(1, 0); }
-    public static Vector up { get => new Vector(0, 1); }
-    public static Vector one { get => new Vector(1, 1); }
-    public static Vector zero { get => new Vector(0, 0); }
+    public static Vector right 
+    {
+        get => new Vector(1, 0); 
+    }
+    public static Vector up 
+    {
+        get => new Vector(0, 1); 
+    }
+    public static Vector one 
+    { 
+        get => new Vector(1, 1); 
+    }
+    public static Vector zero 
+    { 
+        get => new Vector(0, 0); 
+    }
 
     public float X
     {
@@ -61,14 +73,6 @@ public struct Vector
         Recalculate();
     }
 
-    public void SetXY(float X, float Y)
-    {
-        x = X;
-        y = Y;
-
-        Recalculate();
-    }
-
     private void Recalculate()
     {
         length = (float)Math.Sqrt(x * x + y * y);
@@ -77,6 +81,21 @@ public struct Vector
     public static Vector Lerp(Vector from, Vector to, float t)
     {
         return from + (to - from) * t;
+    }
+
+    public static float Dot(Vector a, Vector b)
+    {
+        return a.x * b.x + a.y * b.y;
+    }
+
+    public static float Angle(Vector a, Vector b)
+    {
+        if(a.Length == 0 || b.Length == 0)
+        {
+            return 0;
+        }
+
+        return (float)Math.Acos(Dot(a, b) / a.Length * b.Length);
     }
 
     public static float Distance(Vector a, Vector b)
@@ -90,31 +109,46 @@ public struct Vector
     }
     public static Vector operator -(Vector a, Vector b)
     {
-        a.SetXY(a.X - b.X, a.Y - b.Y);
+        a.x -= b.x;
+        a.y -= b.y;
+
+        a.Recalculate();
 
         return a;
     }
     public static Vector operator +(Vector a, Vector b)
     {
-        a.SetXY(a.X + b.X, a.Y + b.Y);
+        a.x += b.X;
+        a.y += b.y;
+
+        a.Recalculate();
 
         return a;
     }
     public static Vector operator *(float b, Vector a)
     {
-        a.SetXY(a.X * b, a.Y * b);
+        a.x *= b;
+        a.y *= b;
+
+        a.Recalculate();
 
         return a;
     }
     public static Vector operator *(Vector a, float b)
     {
-        a.SetXY(a.X * b, a.Y * b);
+        a.x *= b;
+        a.y *= b;
+
+        a.Recalculate();
 
         return a;
     }
     public static Vector operator /(Vector a, float b)
     {
-        a.SetXY(a.X / b, a.Y / b);
+        a.x /= b;
+        a.y /= b;
+
+        a.Recalculate();
 
         return a;
     }

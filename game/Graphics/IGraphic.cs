@@ -2,7 +2,8 @@
 
 public interface IGraphic
 {
-    void Draw();
-    void DrawGameObjects(Camera camera, GameObject[] gameObjects);
+    void BeginRenderer(Camera camera);
+    void EndRenderer();
+    void Draw(Vector position, Vector scale, Sprite sprite, bool useWorldSpace);
     void Release();
 }

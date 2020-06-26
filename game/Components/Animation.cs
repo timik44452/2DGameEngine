@@ -29,7 +29,7 @@ public class Animation : Component
         timer = 0;
     }
 
-    public override void Update()
+    public override void OnRenderer()
     {
         if(gameObject.renderer == null)
         {

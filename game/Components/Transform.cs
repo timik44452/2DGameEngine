@@ -1,18 +1,26 @@
-﻿
+﻿public enum Space
+{
+    World,
+    Screen
+}
+
 public class Transform : Component
 {
-    public Vector position;
-    public Vector scale = Vector.one;
-
-
-    public int VerticalOrientation
+    public Space space = Space.World;
+    public Vector position
     {
-        get => (int)(scale.Y / System.Math.Abs(scale.Y));
+        get => GetPropertyValue<Vector>(nameof(position));
+        set => SetPropertyValue(nameof(position), value);
+    }
+    public Vector scale
+    {
+        get => GetPropertyValue<Vector>(nameof(scale));
+        set => SetPropertyValue(nameof(scale), value);
     }
 
-    public int HorizontalOrientation
+    public override void OnCreated()
     {
-        get => (int)(scale.X / System.Math.Abs(scale.X));
+        CreateProperty(nameof(position), Vector.zero);
+        CreateProperty(nameof(scale), Vector.one);
     }
-
 }

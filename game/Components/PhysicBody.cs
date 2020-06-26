@@ -26,7 +26,7 @@ public class PhysicBody : Component
     {
     }
 
-    public override void Update()
+    public override void OnRenderer()
     {
         //if (!IsStatic)
         //{
